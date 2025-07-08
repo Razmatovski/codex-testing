@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<h2>Settings</h2>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <p>{{ form.key.label }} {{ form.key() }}</p>
+  <p>{{ form.value.label }} {{ form.value() }}</p>
+  <p>{{ form.submit() }}</p>
+</form>
+<table>
+  <tr><th>ID</th><th>Key</th><th>Value</th><th>Actions</th></tr>
+  {% for setting in settings %}
+  <tr>
+    <td>{{ setting.id }}</td>
+    <td>{{ setting.key }}</td>
+    <td>{{ setting.value }}</td>
+    <td>
+      <a href="{{ url_for('edit_setting', setting_id=setting.id) }}">edit</a>
+      <a href="{{ url_for('delete_setting', setting_id=setting.id) }}">delete</a>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
