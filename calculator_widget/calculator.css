@@ -1,0 +1,51 @@
+#calculator-widget {
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: sans-serif;
+}
+
+#calculator-widget table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#calculator-widget th,
+#calculator-widget td {
+  border: 1px solid #ccc;
+  padding: 4px;
+}
+
+#calculator-widget .controls,
+#calculator-widget .grand-total {
+  margin-top: 10px;
+}
+
+#calculator-widget button {
+  margin-right: 5px;
+}
+
+@media (max-width: 500px) {
+  #calculator-widget table, #calculator-widget thead, #calculator-widget tbody, #calculator-widget th, #calculator-widget td, #calculator-widget tr {
+    display: block;
+  }
+  #calculator-widget th {
+    display: none;
+  }
+  #calculator-widget td {
+    border: none;
+    position: relative;
+    padding-left: 50%;
+  }
+  #calculator-widget td:before {
+    position: absolute;
+    top: 0;
+    left: 6px;
+    width: 45%;
+    white-space: nowrap;
+    font-weight: bold;
+  }
+  #calculator-widget td:nth-of-type(1):before { content: attr(data-label-service); }
+  #calculator-widget td:nth-of-type(2):before { content: attr(data-label-qty); }
+  #calculator-widget td:nth-of-type(3):before { content: attr(data-label-price); }
+  #calculator-widget td:nth-of-type(4):before { content: attr(data-label-total); }
+}
