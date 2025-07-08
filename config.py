@@ -8,3 +8,9 @@ class Config:
         "SQLALCHEMY_DATABASE_URI", "sqlite:///app.db"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    SMTP_SERVER = os.environ.get("SMTP_SERVER", "localhost")
+    SMTP_PORT = int(os.environ.get("SMTP_PORT", 25))
+    SMTP_USERNAME = os.environ.get("SMTP_USERNAME")
+    SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
+    SMTP_USE_TLS = os.environ.get("SMTP_USE_TLS", "false").lower() == "true"
