@@ -19,6 +19,15 @@ pip install -r requirements.txt
 
 ## Running the application
 
+Initialize the database with default data using the provided CLI command:
+
+```bash
+flask --app run.py init-db
+```
+
+Then run the development server:
+
 ```bash
 python run.py
 ```
+
