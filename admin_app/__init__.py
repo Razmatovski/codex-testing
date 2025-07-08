@@ -2,13 +2,17 @@ from flask import Flask, redirect, render_template, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
-from .forms import (LoginForm, UnitForm, CategoryForm, ServiceForm,
-                    SettingForm)
-from .models import (User, UnitOfMeasurement, Category, Service,
-                     Setting)
-
 db = SQLAlchemy()
 login_manager = LoginManager()
+
+from .forms import (
+    LoginForm,
+    UnitForm,
+    CategoryForm,
+    ServiceForm,
+    SettingForm,
+)
+from .models import User, UnitOfMeasurement, Category, Service, Setting
 
 
 def create_app():
