@@ -19,6 +19,9 @@ def create_app():
     login_manager.login_view = 'login'
 
     from . import models  # noqa: F401
+    from .api import api_bp
+
+    app.register_blueprint(api_bp)
 
     @login_manager.user_loader
     def load_user(user_id):
