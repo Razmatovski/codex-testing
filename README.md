@@ -37,6 +37,22 @@ Install the dependencies with pip:
 pip install -r requirements.txt
 ```
 
+## Environment variables
+
+The application reads some settings from the environment:
+
+- `SECRET_KEY` – secret value used to sign sessions. If not set, a random
+  value will be generated on startup.
+- `SQLALCHEMY_DATABASE_URI` – SQLAlchemy connection string. Defaults to
+  `sqlite:///app.db`.
+
+Example setup:
+
+```bash
+export SECRET_KEY="change-this-key"
+export SQLALCHEMY_DATABASE_URI="sqlite:///app.db"
+```
+
 ## Running the application
 
 Initialize the database with default data using the provided CLI command. It
