@@ -234,6 +234,5 @@ def register_routes(app: Flask) -> None:
         return redirect(url_for('settings'))
 
 
-app = create_app()
 
 
