@@ -1,4 +1,6 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
+import smtplib
+from email.message import EmailMessage
 from .models import Language, Currency, UnitOfMeasurement, Category, Service, Setting
 from . import db
 import re
@@ -91,7 +93,27 @@ def send_calculation():
     if not grand_total or not _is_number(grand_total):
         return jsonify({"status": "error", "message": "Invalid grand_total_price."}), 400
 
-    # Email sending placeholder
-    print(f"Send calculation to {user_email}: total {grand_total}")
+    message = EmailMessage()
+    message['Subject'] = 'Calculation Results'
+    sender = current_app.config.get('SMTP_USERNAME', 'no-reply@example.com') or 'no-reply@example.com'
+    message['From'] = sender
+    message['To'] = user_email
+    message.set_content(f'Total price: {grand_total}')
+
+    try:
+        host = current_app.config['SMTP_SERVER']
+        port = current_app.config['SMTP_PORT']
+        username = current_app.config.get('SMTP_USERNAME')
+        password = current_app.config.get('SMTP_PASSWORD')
+        use_tls = current_app.config.get('SMTP_USE_TLS', False)
+
+        with smtplib.SMTP(host, port) as server:
+            if use_tls:
+                server.starttls()
+            if username:
+                server.login(username, password or '')
+            server.send_message(message)
+    except smtplib.SMTPException:
+        return jsonify({"status": "error", "message": "Failed to send email."}), 500
 
     return jsonify({"status": "success", "message": "Calculation successfully sent to your email."}), 200

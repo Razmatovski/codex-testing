@@ -45,6 +45,12 @@ The application reads some settings from the environment:
   value will be generated on startup.
 - `SQLALCHEMY_DATABASE_URI` – SQLAlchemy connection string. Defaults to
   `sqlite:///app.db`.
+- `SMTP_SERVER` – hostname of the SMTP server. Defaults to `localhost`.
+- `SMTP_PORT` – port of the SMTP server. Defaults to `25`.
+- `SMTP_USERNAME` – username for SMTP authentication (optional).
+- `SMTP_PASSWORD` – password for SMTP authentication (optional).
+- `SMTP_USE_TLS` – set to `true` to enable TLS (optional).
+
 
 Example setup:
 

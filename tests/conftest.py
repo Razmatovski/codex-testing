@@ -7,6 +7,8 @@ def app():
     app = create_app()
     app.config['TESTING'] = True
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
+    app.config['SMTP_SERVER'] = 'localhost'
+    app.config['SMTP_PORT'] = 25
     with app.app_context():
         db.create_all()
         lang = Language(code='en', name='English')
