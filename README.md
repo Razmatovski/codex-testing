@@ -19,7 +19,8 @@ pip install -r requirements.txt
 
 ## Running the application
 
-Initialize the database with default data using the provided CLI command:
+Initialize the database with default data using the provided CLI command. It
+creates a default user `admin` with password `admin`:
 
 ```bash
 flask --app run.py init-db
