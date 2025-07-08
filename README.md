@@ -32,3 +32,11 @@ Then run the development server:
 python run.py
 ```
 
+
+## Running tests
+
+After installing the dependencies, run the unit tests using `pytest`:
+
+```bash
+pytest
+```
