@@ -67,6 +67,9 @@ creates a default user `admin` with password `admin`:
 ```bash
 flask --app run.py init-db
 ```
+The command will prompt before deleting any existing data. If you confirm,
+**all tables will be dropped and recreated**, so make sure you don't have
+important information stored.
 
 Then run the development server:
 

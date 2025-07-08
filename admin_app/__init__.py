@@ -46,7 +46,15 @@ def register_cli(app: Flask) -> None:
         """Initialize database and create default data."""
         from .models import Language, Currency, UnitOfMeasurement
 
-        db.drop_all()
+        if db.engine.table_names():
+            confirm = input(
+                "Existing tables detected. This will DELETE all data and recreate them. Continue? [y/N]: "
+            )
+            if confirm.lower() != "y":
+                print("Aborted.")
+                return
+            db.drop_all()
+
         db.create_all()
 
         # Default languages
