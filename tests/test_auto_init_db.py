@@ -1,4 +1,3 @@
-import os
 from admin_app import create_app, ensure_db_initialized, db
 from admin_app.models import User
 
