@@ -1,6 +1,12 @@
 from flask import Flask, redirect, render_template, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_login import (
+    LoginManager,
+    login_user,
+    logout_user,
+    login_required,
+    current_user,
+)
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -46,7 +52,12 @@ def register_cli(app: Flask) -> None:
         """Initialize database and create default data."""
         from .models import Language, Currency, UnitOfMeasurement
 
-        if db.engine.table_names():
+        tables = (
+            db.engine.table_names()
+            if hasattr(db.engine, "table_names")
+            else db.inspect(db.engine).get_table_names()
+        )
+        if tables:
             confirm = input(
                 "Existing tables detected. This will DELETE all data and recreate them. Continue? [y/N]: "
             )
@@ -75,6 +86,38 @@ def register_cli(app: Flask) -> None:
         db.session.add_all([en, ru, usd, eur, kg, pc, admin])
         db.session.commit()
         print("Database initialized")
+
+
+def ensure_db_initialized(app: Flask) -> None:
+    """Create database tables and default data if none exist."""
+    from .models import Language, Currency, UnitOfMeasurement
+
+    with app.app_context():
+        tables = (
+            db.engine.table_names()
+            if hasattr(db.engine, "table_names")
+            else db.inspect(db.engine).get_table_names()
+        )
+        if not tables:
+            db.create_all()
+
+            # Default languages
+            en = Language(code="en", name="English")
+            ru = Language(code="ru", name="Russian")
+
+            # Default currencies
+            usd = Currency(code="USD", name="US Dollar", symbol="$")
+            eur = Currency(code="EUR", name="Euro", symbol="€")
+
+            # Default units of measurement
+            kg = UnitOfMeasurement(name="Kilogram", abbreviation="kg")
+            pc = UnitOfMeasurement(name="Piece", abbreviation="pc")
+
+            admin = User(username="admin")
+            admin.set_password("admin")
+
+            db.session.add_all([en, ru, usd, eur, kg, pc, admin])
+            db.session.commit()
 
 
 def register_routes(app: Flask) -> None:

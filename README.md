@@ -61,17 +61,19 @@ export SQLALCHEMY_DATABASE_URI="sqlite:///app.db"
 
 ## Running the application
 
-Initialize the database with default data using the provided CLI command. It
-creates a default user `admin` with password `admin`:
+On the first launch the application will automatically create the SQLite
+database and populate it with the same default records as the `init-db`
+command. This includes a user `admin` with password `admin`.
+
+You can still initialize or reset the database manually at any time using the
+CLI command:
 
 ```bash
 flask --app run.py init-db
 ```
-The command will prompt before deleting any existing data. If you confirm,
-**all tables will be dropped and recreated**, so make sure you don't have
-important information stored.
+This command prompts before dropping any existing tables.
 
-Then run the development server:
+After the database is ready, run the development server:
 
 ```bash
 python run.py
