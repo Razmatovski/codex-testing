@@ -79,6 +79,10 @@ After the database is ready, run the development server:
 python run.py
 ```
 
+Once the server is running you can open the calculator widget directly at
+`http://localhost:5000/calculator/`. A link to this page is also available in
+the admin navigation bar.
+
 ## Building the widget
 
 The static widget lives in the `calculator_widget` directory. To use it as is,
