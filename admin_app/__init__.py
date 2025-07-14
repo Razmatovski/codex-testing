@@ -1,4 +1,13 @@
-from flask import Flask, redirect, render_template, url_for, request, flash
+import os
+from flask import (
+    Flask,
+    redirect,
+    render_template,
+    url_for,
+    request,
+    flash,
+    send_from_directory,
+)
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
     LoginManager,
@@ -146,6 +155,16 @@ def register_routes(app: Flask) -> None:
     @app.route('/')
     def index():
         return redirect(url_for('units'))
+
+    @app.route('/calculator/')
+    def calculator_widget_page():
+        widget_dir = os.path.join(app.root_path, '..', 'calculator_widget')
+        return send_from_directory(widget_dir, 'index.html')
+
+    @app.route('/calculator/<path:filename>')
+    def calculator_widget_static(filename):
+        widget_dir = os.path.join(app.root_path, '..', 'calculator_widget')
+        return send_from_directory(widget_dir, filename)
 
     # Unit routes
     @app.route('/units', methods=['GET', 'POST'])
