@@ -44,3 +44,15 @@ def app():
 @pytest.fixture
 def client(app):
     return app.test_client()
+
+
+@pytest.fixture
+def login(client):
+    def do_login():
+        return client.post(
+            '/login',
+            data={'username': 'admin', 'password': 'admin'},
+            follow_redirects=True,
+        )
+
+    return do_login
