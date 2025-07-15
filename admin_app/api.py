@@ -67,6 +67,7 @@ def calculator_data():
         }
         return jsonify(data), 200
     except Exception:
+        current_app.logger.exception("Error fetching calculator data")
         return jsonify({"error": "Internal server error"}), 500
 
 
