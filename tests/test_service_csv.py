@@ -2,6 +2,7 @@ import csv
 from io import StringIO, BytesIO
 from .test_admin_crud import login
 from admin_app.models import Service, Category, UnitOfMeasurement
+from sqlalchemy import func
 
 
 def test_export_services_csv(client, app):
@@ -124,3 +125,30 @@ def test_import_services_csv_reuses_related_case_insensitive(client, app):
         assert len(unit) == 1
         assert svc.category_id == cat[0].id
         assert svc.unit_id == unit[0].id
+
+
+def test_import_services_handles_duplicate_categories(client, app):
+    login(client)
+    csv_data = (
+        "name,price,category,unit\n"
+        "First,1,DupeCat,pc\n"
+        "Second,2, dupecat ,pc\n"
+    )
+    data = {'file': (BytesIO(csv_data.encode('utf-8')), 'services.csv')}
+    resp = client.post(
+        '/services/import',
+        data=data,
+        content_type='multipart/form-data',
+    )
+    assert resp.status_code == 302
+    with app.app_context():
+        categories = Category.query.filter(
+            func.lower(Category.name) == 'dupecat'
+        ).all()
+        assert len(categories) == 1
+        cat = categories[0]
+        services = Service.query.filter(
+            Service.name.in_(['First', 'Second'])
+        ).all()
+        assert len(services) == 2
+        assert all(s.category_id == cat.id for s in services)
