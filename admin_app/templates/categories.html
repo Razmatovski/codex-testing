@@ -7,10 +7,18 @@
   <p>{{ form.name.label }} {{ form.name() }}</p>
   <p>{{ form.submit() }}</p>
 </form>
+
+<form method="post" action="{{ url_for('admin.delete_selected_categories') }}">
 <table>
-  <tr><th>ID</th><th>Name</th><th>Actions</th></tr>
+  <tr>
+    <th>Select</th>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Actions</th>
+  </tr>
   {% for category in categories %}
   <tr>
+    <td><input type="checkbox" name="category_ids" value="{{ category.id }}"></td>
     <td>{{ category.id }}</td>
     <td>{{ category.name }}</td>
     <td>
@@ -20,4 +28,6 @@
   </tr>
   {% endfor %}
 </table>
+  <p><input type="submit" value="Delete selected"></p>
+</form>
 {% endblock %}
