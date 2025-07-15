@@ -22,10 +22,11 @@ def app():
     with app.app_context():
         db.create_all()
         lang = Language(code='en', name='English')
+        lang_uk = Language(code='uk', name='Ukrainian')
         currency = Currency(code='USD', name='US Dollar', symbol='$')
         unit = UnitOfMeasurement(name='Piece', abbreviation='pc')
         category = Category(name='Test Category')
-        db.session.add_all([lang, currency, unit, category])
+        db.session.add_all([lang, lang_uk, currency, unit, category])
         db.session.commit()
         service = Service(name='Test Service', price=1.0,
                           category_id=category.id, unit_id=unit.id)
