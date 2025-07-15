@@ -58,10 +58,12 @@ def register_cli(app: Flask) -> None:
         # Default languages
         en = Language(code="en", name="English")
         ru = Language(code="ru", name="Russian")
+        pl = Language(code="pl", name="Polish")
 
         # Default currencies
         usd = Currency(code="USD", name="US Dollar", symbol="$")
         eur = Currency(code="EUR", name="Euro", symbol="€")
+        pln = Currency(code="PLN", name="Polish Zloty", symbol="zł")
 
         # Default units of measurement
         kg = UnitOfMeasurement(name="Kilogram", abbreviation="kg")
@@ -70,7 +72,7 @@ def register_cli(app: Flask) -> None:
         admin = User(username="admin")
         admin.set_password("admin")
 
-        db.session.add_all([en, ru, usd, eur, kg, pc, admin])
+        db.session.add_all([en, ru, pl, usd, eur, pln, kg, pc, admin])
         db.session.commit()
         print("Database initialized")
 
@@ -87,10 +89,12 @@ def ensure_db_initialized(app: Flask) -> None:
             # Default languages
             en = Language(code="en", name="English")
             ru = Language(code="ru", name="Russian")
+            pl = Language(code="pl", name="Polish")
 
             # Default currencies
             usd = Currency(code="USD", name="US Dollar", symbol="$")
             eur = Currency(code="EUR", name="Euro", symbol="€")
+            pln = Currency(code="PLN", name="Polish Zloty", symbol="zł")
 
             # Default units of measurement
             kg = UnitOfMeasurement(name="Kilogram", abbreviation="kg")
@@ -99,5 +103,5 @@ def ensure_db_initialized(app: Flask) -> None:
             admin = User(username="admin")
             admin.set_password("admin")
 
-            db.session.add_all([en, ru, usd, eur, kg, pc, admin])
+            db.session.add_all([en, ru, pl, usd, eur, pln, kg, pc, admin])
             db.session.commit()
