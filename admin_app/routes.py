@@ -2,8 +2,14 @@ from flask import Blueprint, redirect, render_template, url_for, request, flash,
 from flask_login import login_user, logout_user, login_required, current_user
 
 from . import db
-from .forms import LoginForm, UnitForm, CategoryForm, ServiceForm, SettingForm
-from .models import User, UnitOfMeasurement, Category, Service, Setting
+from .forms import (
+    LoginForm,
+    UnitForm,
+    CategoryForm,
+    ServiceForm,
+    DefaultSettingsForm,
+)
+from .models import User, UnitOfMeasurement, Category, Service, Setting, Language, Currency
 
 import os
 
@@ -162,33 +168,34 @@ def delete_service(service_id):
 @admin_bp.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
-    form = SettingForm()
+    form = DefaultSettingsForm()
+    lang_setting = Setting.query.filter_by(key="default_language_id").first()
+    cur_setting = Setting.query.filter_by(key="default_currency_id").first()
+
+    if request.method == "GET":
+        if lang_setting:
+            form.language.data = int(lang_setting.value)
+        if cur_setting:
+            form.currency.data = int(cur_setting.value)
+
     if form.validate_on_submit():
-        setting = Setting(key=form.key.data, value=form.value.data)
-        db.session.add(setting)
-        db.session.commit()
-        return redirect(url_for('admin.settings'))
-    settings = Setting.query.all()
-    return render_template('settings.html', form=form, settings=settings)
+        try:
+            if not lang_setting:
+                lang_setting = Setting(key="default_language_id")
+                db.session.add(lang_setting)
+            lang_setting.value = str(form.language.data)
 
+            if not cur_setting:
+                cur_setting = Setting(key="default_currency_id")
+                db.session.add(cur_setting)
+            cur_setting.value = str(form.currency.data)
 
-@admin_bp.route('/settings/edit/<int:setting_id>', methods=['GET', 'POST'])
-@login_required
-def edit_setting(setting_id):
-    setting = Setting.query.get_or_404(setting_id)
-    form = SettingForm(obj=setting)
-    if form.validate_on_submit():
-        form.populate_obj(setting)
-        db.session.commit()
-        return redirect(url_for('admin.settings'))
-    return render_template('settings.html', form=form, settings=Setting.query.all())
+            db.session.commit()
+            flash("Settings saved")
+            return redirect(url_for("admin.settings"))
+        except Exception:
+            db.session.rollback()
+            flash("Failed to save settings", "error")
 
-
-@admin_bp.route('/settings/delete/<int:setting_id>')
-@login_required
-def delete_setting(setting_id):
-    setting = Setting.query.get_or_404(setting_id)
-    db.session.delete(setting)
-    db.session.commit()
-    return redirect(url_for('admin.settings'))
+    return render_template("settings.html", form=form)
 

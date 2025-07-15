@@ -1,4 +1,11 @@
-from admin_app.models import UnitOfMeasurement, Category, Service, Setting
+from admin_app.models import (
+    UnitOfMeasurement,
+    Category,
+    Service,
+    Setting,
+    Language,
+    Currency,
+)
 
 
 def login(client):
@@ -65,16 +72,16 @@ def test_service_crud(client, app):
         assert Service.query.get(svc.id) is None
 
 
-def test_setting_crud(client, app):
+def test_update_default_settings(client, app):
     login(client)
-    client.post('/settings', data={'key': 'test_key', 'value': '1'}, follow_redirects=True)
     with app.app_context():
-        setting = Setting.query.filter_by(key='test_key').first()
-        assert setting is not None
-    client.post(f'/settings/edit/{setting.id}', data={'key': 'test_key', 'value': '2'}, follow_redirects=True)
+        lang = Language.query.first()
+        cur = Currency.query.first()
+
+    client.post('/settings', data={'language': str(lang.id), 'currency': str(cur.id)}, follow_redirects=True)
+
     with app.app_context():
-        setting = Setting.query.get(setting.id)
-        assert setting.value == '2'
-    client.get(f'/settings/delete/{setting.id}', follow_redirects=True)
-    with app.app_context():
-        assert Setting.query.get(setting.id) is None
+        lang_setting = Setting.query.filter_by(key='default_language_id').first()
+        cur_setting = Setting.query.filter_by(key='default_currency_id').first()
+        assert lang_setting.value == str(lang.id)
+        assert cur_setting.value == str(cur.id)
