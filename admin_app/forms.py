@@ -28,9 +28,6 @@ class ServiceForm(FlaskForm):
     submit = SubmitField('Save')
 
 
-class SettingForm(FlaskForm):
-    """Placeholder form kept for backward compatibility."""
-    submit = SubmitField('Save')
 
 
 class DefaultSettingsForm(FlaskForm):
