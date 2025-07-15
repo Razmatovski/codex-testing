@@ -363,7 +363,10 @@
           state.language = fallbackLang;
         }
 
-        const currencyByLang = { pl: 'PLN', en: 'USD', ru: 'USD', uk: 'USD' };
+1fyd88-codex
+        const currencyByLang = { pl: 'PLN', en: 'USD', ru: 'USD', uk: 'PLN' };
+        const currencyByLang = { pl: 'PLN', en: 'USD', ru: 'USD', uk: 'PLN' };
+main
         const mappedCur = currencyByLang[browserLang];
         if (mappedCur && state.currencies.some(c => c.code === mappedCur)) {
           state.currency = mappedCur;
