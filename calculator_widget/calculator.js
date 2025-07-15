@@ -10,6 +10,7 @@
       unitPrice: 'Unit price',
       total: 'Total',
       addItem: 'Add item',
+      removeSelected: 'Remove selected',
       grandTotal: 'Grand total',
       send: 'Send email',
       export: 'Export CSV',
@@ -21,6 +22,7 @@
       unitPrice: '\u0426\u0435\u043d\u0430',
       total: '\u0418\u0442\u043e\u0433',
       addItem: '\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c',
+      removeSelected: '\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u043e\u0435',
       grandTotal: '\u041e\u0431\u0449\u0430\u044f \u0441\u0443\u043c\u043c\u0430',
       send: '\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c',
       export: 'CSV',
@@ -104,6 +106,11 @@
     const totalSpan = createElem('span', 'item-total', '0');
     tdTotal.appendChild(totalSpan);
 
+    const tdSelect = createElem('td', 'select-col');
+    const selectChk = createElem('input');
+    selectChk.type = 'checkbox';
+    tdSelect.appendChild(selectChk);
+
     const tdRemove = createElem('td');
     const removeBtn = createElem('button', 'remove-btn', 'x');
     tdRemove.appendChild(removeBtn);
@@ -112,6 +119,7 @@
     tr.appendChild(tdQty);
     tr.appendChild(tdPrice);
     tr.appendChild(tdTotal);
+    tr.appendChild(tdSelect);
     tr.appendChild(tdRemove);
     tbody.appendChild(tr);
 
@@ -121,7 +129,7 @@
     tdPrice.setAttribute('data-label-price', t('unitPrice'));
     tdTotal.setAttribute('data-label-total', t('total'));
 
-    const item = { row: tr, service: select, qty: qtyInput, price: priceSpan, total: totalSpan };
+    const item = { row: tr, service: select, qty: qtyInput, price: priceSpan, total: totalSpan, select: selectChk };
     state.items.push(item);
 
     function updatePrice() {
@@ -161,6 +169,15 @@
     URL.revokeObjectURL(url);
   }
 
+  function removeSelected() {
+    const toRemove = state.items.filter(item => item.select && item.select.checked);
+    toRemove.forEach(item => {
+      tbody.removeChild(item.row);
+    });
+    state.items = state.items.filter(item => !(item.select && item.select.checked));
+    recalc();
+  }
+
   function sendEmail() {
     const email = emailInput.value.trim();
     const items = state.items.map(item => {
@@ -192,7 +209,7 @@
   const table = createElem('table', 'calc-table');
   const thead = createElem('thead');
   const headRow = createElem('tr');
-  ['service', 'quantity', 'unitPrice', 'total', ''].forEach(key => {
+  ['service', 'quantity', 'unitPrice', 'total', '', ''].forEach(key => {
     headRow.appendChild(createElem('th', null, key ? t(key) : ''));
   });
   thead.appendChild(headRow);
@@ -207,6 +224,7 @@
   controls.appendChild(currSelect);
 
   const addBtn = createElem('button', 'add-btn', t('addItem'));
+  const removeSelectedBtn = createElem('button', 'remove-selected-btn', t('removeSelected'));
   const grandTotalEl = createElem('div', 'grand-total');
   const emailInput = createElem('input');
   emailInput.type = 'email';
@@ -217,12 +235,14 @@
   container.appendChild(controls);
   container.appendChild(table);
   container.appendChild(addBtn);
+  container.appendChild(removeSelectedBtn);
   container.appendChild(grandTotalEl);
   container.appendChild(emailInput);
   container.appendChild(sendBtn);
   container.appendChild(exportBtn);
 
   addBtn.addEventListener('click', addRow);
+  removeSelectedBtn.addEventListener('click', removeSelected);
   exportBtn.addEventListener('click', exportCSV);
   sendBtn.addEventListener('click', sendEmail);
 
@@ -241,6 +261,7 @@
     headRow.childNodes[2].textContent = t('unitPrice');
     headRow.childNodes[3].textContent = t('total');
     addBtn.textContent = t('addItem');
+    removeSelectedBtn.textContent = t('removeSelected');
     grandTotalEl.textContent = `${t('grandTotal')}: 0 ${state.currency}`;
     sendBtn.textContent = t('send');
     exportBtn.textContent = t('export');

@@ -24,6 +24,11 @@
   margin-right: 5px;
 }
 
+#calculator-widget .select-col {
+  text-align: center;
+  width: 30px;
+}
+
 @media (max-width: 500px) {
   #calculator-widget table, #calculator-widget thead, #calculator-widget tbody, #calculator-widget th, #calculator-widget td, #calculator-widget tr {
     display: block;
