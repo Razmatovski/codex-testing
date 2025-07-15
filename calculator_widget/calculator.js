@@ -346,16 +346,36 @@
   }
 
   function fetchData() {
-    fetch(API_BASE + '/calculator-data').then(r => r.json()).then(data => {
-      state.languages = data.languages;
-      state.currencies = data.currencies;
-      state.categories = data.categories;
-      state.language = data.settings.default_language_id || 'en';
-      state.currency = data.settings.default_currency_id || 'USD';
-      populateSelectors();
-      updateTexts();
-      addRow();
-    }).catch(err => console.error(err));
+    fetch(API_BASE + '/calculator-data')
+      .then(r => r.json())
+      .then(data => {
+        state.languages = data.languages;
+        state.currencies = data.currencies;
+        state.categories = data.categories;
+
+        const fallbackLang = data.settings.default_language_id || 'en';
+        const fallbackCur = data.settings.default_currency_id || 'USD';
+
+        const browserLang = ((navigator.languages && navigator.languages[0]) || navigator.language || '').slice(0, 2).toLowerCase();
+        if (browserLang && state.languages.some(l => l.id === browserLang)) {
+          state.language = browserLang;
+        } else {
+          state.language = fallbackLang;
+        }
+
+        const currencyByLang = { pl: 'PLN', en: 'USD', ru: 'USD', uk: 'PLN' };
+        const mappedCur = currencyByLang[browserLang];
+        if (mappedCur && state.currencies.some(c => c.code === mappedCur)) {
+          state.currency = mappedCur;
+        } else {
+          state.currency = fallbackCur;
+        }
+
+        populateSelectors();
+        updateTexts();
+        addRow();
+      })
+      .catch(err => console.error(err));
   }
 
   fetchData();
