@@ -75,9 +75,13 @@ flask --app run.py init-db
 This command prompts before dropping any existing tables.
 
 If you upgrade to a new version that adds default entries (such as
-additional currencies or languages), run the same command after applying any
-database migrations. This will insert the new records into your existing
-database.
+additional currencies or languages), you can insert them without dropping
+your data using the command:
+
+```bash
+flask --app run.py sync-default-data
+```
+Run this after applying any database migrations.
 
 After the database is ready, run the development server:
 

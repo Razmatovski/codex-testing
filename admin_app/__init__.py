@@ -36,6 +36,32 @@ def create_default_data() -> None:
     db.session.commit()
 
 
+def sync_default_data() -> None:
+    """Ensure default languages and currencies are present."""
+    from .models import Language, Currency
+
+    languages = [
+        ("en", "English"),
+        ("ru", "Russian"),
+        ("pl", "Polish"),
+        ("uk", "Ukrainian"),
+    ]
+    for code, name in languages:
+        if not Language.query.filter_by(code=code).first():
+            db.session.add(Language(code=code, name=name))
+
+    currencies = [
+        ("USD", "US Dollar", "$"),
+        ("EUR", "Euro", "€"),
+        ("PLN", "Polish Zloty", "zł"),
+    ]
+    for code, name, symbol in currencies:
+        if not Currency.query.filter_by(code=code).first():
+            db.session.add(Currency(code=code, name=name, symbol=symbol))
+
+    db.session.commit()
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
@@ -83,6 +109,14 @@ def register_cli(app: Flask) -> None:
         create_default_data()
         print("Database initialized")
 
+    @app.cli.command("sync-default-data")
+    def sync_default_data_command():
+        """Insert missing default languages and currencies."""
+
+        with app.app_context():
+            sync_default_data()
+        print("Default data synced")
+
 
 def ensure_db_initialized(app: Flask) -> None:
     """Create database tables and default data if none exist."""
@@ -92,3 +126,4 @@ def ensure_db_initialized(app: Flask) -> None:
         if not tables:
             db.create_all()
             create_default_data()
+        sync_default_data()
