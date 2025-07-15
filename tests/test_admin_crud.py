@@ -103,6 +103,42 @@ def test_delete_multiple_units(client, app):
             assert db.session.get(UnitOfMeasurement, int(uid)) is None
 
 
+def test_delete_multiple_services(client, app):
+    login(client)
+    with app.app_context():
+        category = Category.query.first()
+        unit = UnitOfMeasurement.query.first()
+
+    names = ["A1", "B1", "C1"]
+    for n in names:
+        client.post(
+            "/services",
+            data={
+                "name": n,
+                "price": "1",
+                "category": str(category.id),
+                "unit": str(unit.id),
+            },
+            follow_redirects=True,
+        )
+
+    with app.app_context():
+        ids = [
+            str(s.id)
+            for s in Service.query.filter(Service.name.in_(names)).all()
+        ]
+
+    client.post(
+        "/services/delete-selected",
+        data={"service_ids": ids},
+        follow_redirects=True,
+    )
+
+    with app.app_context():
+        for sid in ids:
+            assert db.session.get(Service, int(sid)) is None
+
+
 def test_service_crud(client, app):
     login(client)
     with app.app_context():
