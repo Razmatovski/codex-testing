@@ -1,0 +1,17 @@
+{
+  "name": "codex-testing",
+  "version": "1.0.0",
+  "description": "This repository contains a minimal Flask application and a small JavaScript widget for price calculation. The main goal of the project is to demonstrate a simple admin interface with user authentication, basic CRUD screens and an API that the front-end widget can consume.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "jest": "^30.0.4",
+    "jsdom": "^26.1.0"
+  }
+}
