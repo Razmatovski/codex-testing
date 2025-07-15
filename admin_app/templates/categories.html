@@ -11,7 +11,7 @@
 <form method="post" action="{{ url_for('admin.delete_selected_categories') }}">
 <table>
   <tr>
-    <th>Select</th>
+    <th><input type="checkbox" id="select-all-categories"></th>
     <th>ID</th>
     <th>Name</th>
     <th>Actions</th>
@@ -30,4 +30,11 @@
 </table>
   <p><input type="submit" value="Delete selected"></p>
 </form>
+<script>
+document.getElementById('select-all-categories').addEventListener('change', function() {
+  document.querySelectorAll('input[name="category_ids"]').forEach(function(cb) {
+    cb.checked = document.getElementById('select-all-categories').checked;
+  });
+});
+</script>
 {% endblock %}
