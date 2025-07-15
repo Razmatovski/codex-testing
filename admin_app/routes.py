@@ -227,17 +227,21 @@ def import_services():
         except ValueError:
             abort(400, 'Invalid price')
 
+
         category = None
         if category_name:
             category = Category.query.filter_by(name=category_name).first()
             if not category:
-                abort(400, 'Unknown category')
+                category = Category(name=category_name)
+                db.session.add(category)
+
 
         unit = None
         if unit_abbrev:
             unit = UnitOfMeasurement.query.filter_by(abbreviation=unit_abbrev).first()
             if not unit:
-                abort(400, 'Unknown unit')
+                unit = UnitOfMeasurement(name=unit_abbrev, abbreviation=unit_abbrev)
+                db.session.add(unit)
 
         svc = Service.query.filter_by(name=name).first()
         if svc:
