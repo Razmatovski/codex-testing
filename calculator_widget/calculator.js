@@ -80,6 +80,11 @@
     return el;
   }
 
+  function getCurrencySymbol(code) {
+    const cur = state.currencies.find(c => (c.code || c.id) === code);
+    return cur && cur.symbol ? cur.symbol : code;
+  }
+
   function recalc() {
     let grand = 0;
     state.items.forEach(item => {
@@ -92,7 +97,7 @@
         grand += total;
       }
     });
-    grandTotalEl.textContent = `${t('grandTotal')}: ${grand.toFixed(2)} ${state.currency}`;
+    grandTotalEl.textContent = `${t('grandTotal')}: ${grand.toFixed(2)} ${getCurrencySymbol(state.currency)}`;
   }
 
   function findService(id) {
@@ -304,7 +309,7 @@
     selectAllChk.title = t('selectAll');
     addBtn.textContent = t('addItem');
     removeSelectedBtn.textContent = t('removeSelected');
-    grandTotalEl.textContent = `${t('grandTotal')}: 0 ${state.currency}`;
+    grandTotalEl.textContent = `${t('grandTotal')}: 0 ${getCurrencySymbol(state.currency)}`;
     sendBtn.textContent = t('send');
     exportBtn.textContent = t('export');
     emailInput.placeholder = t('emailPlaceholder');
@@ -334,7 +339,7 @@
       const opt = createElem('option');
       const val = c.code || c.id;
       opt.value = val;
-      opt.textContent = val;
+      opt.textContent = c.symbol || val;
       currSelect.appendChild(opt);
     });
     currSelect.value = state.currency;
