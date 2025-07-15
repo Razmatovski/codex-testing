@@ -273,6 +273,9 @@ def import_services():
     if not reader.fieldnames or not required.issubset(reader.fieldnames):
         abort(400, 'Missing columns')
 
+    category_cache = {}
+    unit_cache = {}
+
     for row in reader:
         name = row.get('name')
         price = row.get('price')
@@ -296,25 +299,34 @@ def import_services():
 
         category = None
         if category_name:
-            category = Category.query.filter(
-                func.lower(Category.name) == category_name.lower()
-            ).first()
+            cat_key = category_name.lower()
+            category = category_cache.get(cat_key)
             if not category:
-                category = Category(name=category_name)
-                db.session.add(category)
+                category = Category.query.filter(
+                    func.lower(Category.name) == cat_key
+                ).first()
+                if not category:
+                    category = Category(name=category_name)
+                    db.session.add(category)
+                    db.session.flush()
+                category_cache[cat_key] = category
 
         unit = None
         if unit_abbrev:
-            unit = UnitOfMeasurement.query.filter(
-                func.lower(UnitOfMeasurement.abbreviation)
-                == unit_abbrev.lower()
-            ).first()
+            unit_key = unit_abbrev.lower()
+            unit = unit_cache.get(unit_key)
             if not unit:
-                unit = UnitOfMeasurement(
-                    name=unit_abbrev,
-                    abbreviation=unit_abbrev,
-                )
-                db.session.add(unit)
+                unit = UnitOfMeasurement.query.filter(
+                    func.lower(UnitOfMeasurement.abbreviation) == unit_key
+                ).first()
+                if not unit:
+                    unit = UnitOfMeasurement(
+                        name=unit_abbrev,
+                        abbreviation=unit_abbrev,
+                    )
+                    db.session.add(unit)
+                    db.session.flush()
+                unit_cache[unit_key] = unit
 
         svc = Service.query.filter(
             func.lower(Service.name) == name.lower()
