@@ -58,6 +58,14 @@
     }
   };
 
+  const currencyByLang = { pl: 'PLN', en: 'USD', ru: 'USD', uk: 'PLN' };
+  if (typeof window !== 'undefined') {
+    window.currencyByLang = currencyByLang;
+  }
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports.currencyByLang = currencyByLang;
+  }
+
   const state = {
     language: 'en',
     currency: 'USD',
@@ -363,10 +371,6 @@
           state.language = fallbackLang;
         }
 
-1fyd88-codex
-        const currencyByLang = { pl: 'PLN', en: 'USD', ru: 'USD', uk: 'PLN' };
-        const currencyByLang = { pl: 'PLN', en: 'USD', ru: 'USD', uk: 'PLN' };
-main
         const mappedCur = currencyByLang[browserLang];
         if (mappedCur && state.currencies.some(c => c.code === mappedCur)) {
           state.currency = mappedCur;
