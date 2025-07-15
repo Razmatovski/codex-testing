@@ -128,7 +128,7 @@ def delete_unit(unit_id):
 def delete_selected_units():
     ids = request.form.getlist('unit_ids')
     for uid in ids:
-        unit = UnitOfMeasurement.query.get(uid)
+        unit = db.session.get(UnitOfMeasurement, uid)
         if unit:
             db.session.delete(unit)
     if ids:
@@ -179,7 +179,7 @@ def delete_category(category_id):
 def delete_selected_categories():
     ids = request.form.getlist('category_ids')
     for cid in ids:
-        category = Category.query.get(cid)
+        category = db.session.get(Category, cid)
         if category:
             db.session.delete(category)
     if ids:
@@ -254,7 +254,7 @@ def delete_service(service_id):
 def delete_selected_services():
     ids = request.form.getlist('service_ids')
     for sid in ids:
-        svc = Service.query.get(sid)
+        svc = db.session.get(Service, sid)
         if svc:
             db.session.delete(svc)
     if ids:
