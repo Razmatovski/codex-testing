@@ -13,6 +13,7 @@ from flask import (
 from flask_login import login_user, logout_user, login_required, current_user
 
 from . import db
+from sqlalchemy import func
 import csv
 import io
 from .forms import (
@@ -219,6 +220,13 @@ def import_services():
         category_name = row.get('category')
         unit_abbrev = row.get('unit')
 
+        if isinstance(name, str):
+            name = name.strip()
+        if isinstance(category_name, str):
+            category_name = category_name.strip()
+        if isinstance(unit_abbrev, str):
+            unit_abbrev = unit_abbrev.strip()
+
         if not name or not price:
             abort(400, 'Missing data')
 
@@ -230,7 +238,9 @@ def import_services():
 
         category = None
         if category_name:
-            category = Category.query.filter_by(name=category_name).first()
+            category = Category.query.filter(
+                func.lower(Category.name) == category_name.lower()
+            ).first()
             if not category:
                 category = Category(name=category_name)
                 db.session.add(category)
@@ -238,12 +248,16 @@ def import_services():
 
         unit = None
         if unit_abbrev:
-            unit = UnitOfMeasurement.query.filter_by(abbreviation=unit_abbrev).first()
+            unit = UnitOfMeasurement.query.filter(
+                func.lower(UnitOfMeasurement.abbreviation) == unit_abbrev.lower()
+            ).first()
             if not unit:
                 unit = UnitOfMeasurement(name=unit_abbrev, abbreviation=unit_abbrev)
                 db.session.add(unit)
 
-        svc = Service.query.filter_by(name=name).first()
+        svc = Service.query.filter(
+            func.lower(Service.name) == name.lower()
+        ).first()
         if svc:
             svc.price = price
             svc.category = category
