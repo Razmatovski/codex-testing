@@ -1,3 +1,4 @@
+from admin_app import db
 from admin_app.models import (
     UnitOfMeasurement,
     Category,
@@ -20,12 +21,12 @@ def test_unit_crud(client, app):
         assert unit is not None
     client.post(f'/units/edit/{unit.id}', data={'name': 'Gram', 'abbreviation': 'g'}, follow_redirects=True)
     with app.app_context():
-        unit = UnitOfMeasurement.query.get(unit.id)
+        unit = db.session.get(UnitOfMeasurement, unit.id)
         assert unit.name == 'Gram'
         assert unit.abbreviation == 'g'
     client.get(f'/units/delete/{unit.id}', follow_redirects=True)
     with app.app_context():
-        assert UnitOfMeasurement.query.get(unit.id) is None
+        assert db.session.get(UnitOfMeasurement, unit.id) is None
 
 
 def test_category_crud(client, app):
@@ -36,11 +37,11 @@ def test_category_crud(client, app):
         assert cat is not None
     client.post(f'/categories/edit/{cat.id}', data={'name': 'Updated Cat'}, follow_redirects=True)
     with app.app_context():
-        cat = Category.query.get(cat.id)
+        cat = db.session.get(Category, cat.id)
         assert cat.name == 'Updated Cat'
     client.get(f'/categories/delete/{cat.id}', follow_redirects=True)
     with app.app_context():
-        assert Category.query.get(cat.id) is None
+        assert db.session.get(Category, cat.id) is None
 
 
 def test_service_crud(client, app):
@@ -64,12 +65,12 @@ def test_service_crud(client, app):
         'unit': str(unit.id)
     }, follow_redirects=True)
     with app.app_context():
-        svc = Service.query.get(svc.id)
+        svc = db.session.get(Service, svc.id)
         assert svc.name == 'Svc2'
         assert svc.price == 10
     client.get(f'/services/delete/{svc.id}', follow_redirects=True)
     with app.app_context():
-        assert Service.query.get(svc.id) is None
+        assert db.session.get(Service, svc.id) is None
 
 
 def test_update_default_settings(client, app):
