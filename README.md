@@ -81,7 +81,10 @@ your data using the command:
 ```bash
 flask --app run.py sync-default-data
 ```
-Run this after applying any database migrations.
+Run this after applying any database migrations. Existing installations
+should execute it whenever pulling updates that introduce new languages
+or currencies so that the latest default records are inserted without
+overwriting your data.
 
 After the database is ready, run the development server:
 
