@@ -35,8 +35,8 @@ class ServiceForm(FlaskForm):
 
 
 class DefaultSettingsForm(FlaskForm):
-    language = SelectField('Default language', coerce=int)
-    currency = SelectField('Default currency', coerce=int)
+    language = SelectField('Default language', coerce=str)
+    currency = SelectField('Default currency', coerce=str)
     submit = SubmitField('Save')
 
     def __init__(self, *args, **kwargs):
@@ -44,11 +44,11 @@ class DefaultSettingsForm(FlaskForm):
         from .models import Language, Currency
 
         self.language.choices = [
-            (lang.id, lang.name) for lang in Language.query.all()
+            (lang.code, lang.name) for lang in Language.query.all()
         ]
         self.currency.choices = [
             (
-                cur.id,
+                cur.code,
                 f"{cur.code} - {cur.name}",
             )
             for cur in Currency.query.all()
