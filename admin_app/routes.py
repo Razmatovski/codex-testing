@@ -249,6 +249,19 @@ def delete_service(service_id):
     return redirect(url_for('admin.services'))
 
 
+@admin_bp.route('/services/delete-selected', methods=['POST'])
+@login_required
+def delete_selected_services():
+    ids = request.form.getlist('service_ids')
+    for sid in ids:
+        svc = Service.query.get(sid)
+        if svc:
+            db.session.delete(svc)
+    if ids:
+        db.session.commit()
+    return redirect(url_for('admin.services'))
+
+
 @admin_bp.route('/services/export')
 @login_required
 def export_services():
