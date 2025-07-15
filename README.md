@@ -10,6 +10,7 @@ Key features:
 - Management of units of measurement, service categories and individual
   services;
 - Storage of application settings such as default language and currency;
+- Friendly Settings screen with dropdowns to choose the defaults;
 - REST API used by the calculator widget to load reference data and send
   calculation results;
 - A JavaScript/CSS widget located in `calculator_widget` that can be embedded in
@@ -82,6 +83,9 @@ python run.py
 Once the server is running you can open the calculator widget directly at
 `http://localhost:5000/calculator/`. A link to this page is also available in
 the admin navigation bar.
+
+Use the **Settings** page to select the default language and currency shown in
+the widget.
 
 ## Database migrations
 

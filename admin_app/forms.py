@@ -29,6 +29,22 @@ class ServiceForm(FlaskForm):
 
 
 class SettingForm(FlaskForm):
-    key = StringField('Key', validators=[DataRequired()])
-    value = StringField('Value', validators=[DataRequired()])
+    """Placeholder form kept for backward compatibility."""
     submit = SubmitField('Save')
+
+
+class DefaultSettingsForm(FlaskForm):
+    language = SelectField('Default language', coerce=int)
+    currency = SelectField('Default currency', coerce=int)
+    submit = SubmitField('Save')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from .models import Language, Currency
+
+        self.language.choices = [
+            (lang.id, lang.name) for lang in Language.query.all()
+        ]
+        self.currency.choices = [
+            (cur.id, f"{cur.code} - {cur.name}") for cur in Currency.query.all()
+        ]
