@@ -11,6 +11,7 @@
       total: 'Total',
       addItem: 'Add item',
       removeSelected: 'Remove selected',
+      selectAll: 'Select all',
       grandTotal: 'Grand total',
       send: 'Send email',
       export: 'Export CSV',
@@ -26,7 +27,8 @@
       grandTotal: '\u041e\u0431\u0449\u0430\u044f \u0441\u0443\u043c\u043c\u0430',
       send: '\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c',
       export: 'CSV',
-      emailPlaceholder: 'email'
+      emailPlaceholder: 'email',
+      selectAll: '\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u0432\u0441\u0435'
     }
   };
 
@@ -38,6 +40,8 @@
     languages: [],
     items: []
   };
+
+  let selectAllChk;
 
   function t(key) {
     return (translations[state.language] && translations[state.language][key]) || key;
@@ -209,9 +213,20 @@
   const table = createElem('table', 'calc-table');
   const thead = createElem('thead');
   const headRow = createElem('tr');
-  ['service', 'quantity', 'unitPrice', 'total', '', ''].forEach(key => {
-    headRow.appendChild(createElem('th', null, key ? t(key) : ''));
+  ['service', 'quantity', 'unitPrice', 'total'].forEach(key => {
+    headRow.appendChild(createElem('th', null, t(key)));
   });
+  const selectAllTh = createElem('th', 'select-col');
+  selectAllChk = createElem('input');
+  selectAllChk.type = 'checkbox';
+  selectAllTh.appendChild(selectAllChk);
+  selectAllChk.addEventListener('change', () => {
+    state.items.forEach(item => {
+      if (item.select) item.select.checked = selectAllChk.checked;
+    });
+  });
+  headRow.appendChild(selectAllTh);
+  headRow.appendChild(createElem('th')); // remove column header
   thead.appendChild(headRow);
   const tbody = createElem('tbody');
   table.appendChild(thead);
@@ -260,6 +275,7 @@
     headRow.childNodes[1].textContent = t('quantity');
     headRow.childNodes[2].textContent = t('unitPrice');
     headRow.childNodes[3].textContent = t('total');
+    selectAllChk.title = t('selectAll');
     addBtn.textContent = t('addItem');
     removeSelectedBtn.textContent = t('removeSelected');
     grandTotalEl.textContent = `${t('grandTotal')}: 0 ${state.currency}`;
