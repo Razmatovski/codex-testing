@@ -128,3 +128,14 @@ After installing the dependencies, run the unit tests using `pytest`:
 ```bash
 pytest
 ```
+
+## Updating dependencies
+
+To upgrade packages, edit `requirements.txt` with new version numbers. Inside your virtual environment install the updated versions and regenerate the file:
+
+```bash
+pip install -r requirements.txt --upgrade
+pip freeze > requirements.txt
+```
+
+Commit the modified file along with any required code changes.
