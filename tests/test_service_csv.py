@@ -38,6 +38,24 @@ def test_import_services_csv_success(client, app):
         assert svc.price == 3.0
 
 
+def test_import_services_csv_creates_related(client, app):
+    login(client)
+    csv_data = 'name,price,category,unit\nBrand New,4,BrandCat,BC\n'
+    data = {
+        'file': (BytesIO(csv_data.encode('utf-8')), 'services.csv'),
+    }
+    resp = client.post('/services/import', data=data, content_type='multipart/form-data')
+    assert resp.status_code == 302
+    with app.app_context():
+        cat = Category.query.filter_by(name='BrandCat').first()
+        unit = UnitOfMeasurement.query.filter_by(abbreviation='BC').first()
+        svc = Service.query.filter_by(name='Brand New').first()
+        assert cat is not None
+        assert unit is not None
+        assert svc.category_id == cat.id
+        assert svc.unit_id == unit.id
+
+
 def test_import_services_csv_validation_error(client):
     login(client)
     bad_csv = 'wrong\n1,2,3\n'
