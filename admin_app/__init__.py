@@ -59,6 +59,7 @@ def register_cli(app: Flask) -> None:
         en = Language(code="en", name="English")
         ru = Language(code="ru", name="Russian")
         pl = Language(code="pl", name="Polish")
+        uk = Language(code="uk", name="Ukrainian")
 
         # Default currencies
         usd = Currency(code="USD", name="US Dollar", symbol="$")
@@ -72,7 +73,7 @@ def register_cli(app: Flask) -> None:
         admin = User(username="admin")
         admin.set_password("admin")
 
-        db.session.add_all([en, ru, pl, usd, eur, pln, kg, pc, admin])
+        db.session.add_all([en, ru, pl, uk, usd, eur, pln, kg, pc, admin])
         db.session.commit()
         print("Database initialized")
 
@@ -90,6 +91,7 @@ def ensure_db_initialized(app: Flask) -> None:
             en = Language(code="en", name="English")
             ru = Language(code="ru", name="Russian")
             pl = Language(code="pl", name="Polish")
+            uk = Language(code="uk", name="Ukrainian")
 
             # Default currencies
             usd = Currency(code="USD", name="US Dollar", symbol="$")
@@ -103,5 +105,5 @@ def ensure_db_initialized(app: Flask) -> None:
             admin = User(username="admin")
             admin.set_password("admin")
 
-            db.session.add_all([en, ru, pl, usd, eur, pln, kg, pc, admin])
+            db.session.add_all([en, ru, pl, uk, usd, eur, pln, kg, pc, admin])
             db.session.commit()

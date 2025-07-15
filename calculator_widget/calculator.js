@@ -42,6 +42,19 @@
       export: 'Eksportuj CSV',
       emailPlaceholder: 'tw\xf3j email',
       selectAll: 'Zaznacz wszystko'
+    },
+    uk: {
+      service: '\u041F\u043E\u0441\u043B\u0443\u0433\u0430',
+      quantity: '\u041A\u0456\u043B\u044C\u043A\u0456\u0441\u0442\u044C',
+      unitPrice: '\u0426\u0456\u043D\u0430 \u0437\u0430 \u043E\u0434\u0438\u043D\u0438\u0446\u044E',
+      total: '\u0412\u0441\u044C\u043E\u0433\u043E',
+      addItem: '\u0414\u043E\u0434\u0430\u0442\u0438',
+      removeSelected: '\u0412\u0438\u0434\u0430\u043B\u0438\u0442\u0438 \u043E\u0431\u0440\u0430\u043D\u0435',
+      grandTotal: '\u0417\u0430\u0433\u0430\u043B\u044C\u043D\u0430 \u0441\u0443\u043C\u0430',
+      send: '\u0412\u0456\u0434\u043F\u0440\u0430\u0432\u0438\u0442\u0438',
+      export: 'CSV',
+      emailPlaceholder: '\u0442\u0432\u0456\u0439 email',
+      selectAll: '\u041e\u0431\u0440\u0430\u0442\u0438 \u0432\u0441\u0435'
     }
   };
 
