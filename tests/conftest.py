@@ -10,6 +10,7 @@ from admin_app.models import (
     User,
 )
 
+
 @pytest.fixture
 def app():
     app = create_app()
@@ -37,6 +38,7 @@ def app():
         yield app
         db.session.remove()
         db.drop_all()
+
 
 @pytest.fixture
 def client(app):

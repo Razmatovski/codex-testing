@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from . import db
 
+
 class Language(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(8), unique=True, nullable=False)
@@ -10,6 +11,7 @@ class Language(db.Model):
 
     def __repr__(self):
         return f"<Language {self.code}>"
+
 
 class Currency(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -19,6 +21,7 @@ class Currency(db.Model):
 
     def __repr__(self):
         return f"<Currency {self.code}>"
+
 
 class UnitOfMeasurement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,7 +45,10 @@ class Service(db.Model):
     name = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Float, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    category = db.relationship('Category', backref=db.backref('services', lazy=True))
+    category = db.relationship(
+        'Category',
+        backref=db.backref('services', lazy=True),
+    )
     unit_id = db.Column(db.Integer, db.ForeignKey('unit_of_measurement.id'))
     unit = db.relationship('UnitOfMeasurement')
 
@@ -72,4 +78,3 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f"<User {self.username}>"
-

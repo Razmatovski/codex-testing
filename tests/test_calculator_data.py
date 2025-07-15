@@ -1,5 +1,3 @@
-import pytest
-
 
 def test_calculator_data_endpoint(client):
     resp = client.get('/api/v1/calculator-data')

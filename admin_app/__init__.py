@@ -1,14 +1,12 @@
-import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
-
 migrate = Migrate()
 db = SQLAlchemy()
 login_manager = LoginManager()
 
-from .models import User
+from .models import User  # noqa: E402
 
 
 def create_app():
@@ -43,14 +41,12 @@ def register_cli(app: Flask) -> None:
         """Initialize database and create default data."""
         from .models import Language, Currency, UnitOfMeasurement
 
-        tables = (
-            db.engine.table_names()
-            if hasattr(db.engine, "table_names")
-            else db.inspect(db.engine).get_table_names()
-        )
+        tables = db.inspect(db.engine).get_table_names()
         if tables:
             confirm = input(
-                "Existing tables detected. This will DELETE all data and recreate them. Continue? [y/N]: "
+                "Existing tables detected. "
+                "This will DELETE all data and recreate them. "
+                "Continue? [y/N]: "
             )
             if confirm.lower() != "y":
                 print("Aborted.")
@@ -84,11 +80,7 @@ def ensure_db_initialized(app: Flask) -> None:
     from .models import Language, Currency, UnitOfMeasurement
 
     with app.app_context():
-        tables = (
-            db.engine.table_names()
-            if hasattr(db.engine, "table_names")
-            else db.inspect(db.engine).get_table_names()
-        )
+        tables = db.inspect(db.engine).get_table_names()
         if not tables:
             db.create_all()
 
@@ -109,7 +101,3 @@ def ensure_db_initialized(app: Flask) -> None:
 
             db.session.add_all([en, ru, usd, eur, kg, pc, admin])
             db.session.commit()
-
-
-
-

@@ -23,7 +23,13 @@ from .forms import (
     ServiceForm,
     DefaultSettingsForm,
 )
-from .models import User, UnitOfMeasurement, Category, Service, Setting, Language, Currency
+from .models import (
+    User,
+    UnitOfMeasurement,
+    Category,
+    Service,
+    Setting,
+)
 
 import os
 
@@ -58,13 +64,21 @@ def index():
 
 @admin_bp.route('/calculator/')
 def calculator_widget_page():
-    widget_dir = os.path.join(current_app.root_path, '..', 'calculator_widget')
+    widget_dir = os.path.join(
+        current_app.root_path,
+        '..',
+        'calculator_widget',
+    )
     return send_from_directory(widget_dir, 'index.html')
 
 
 @admin_bp.route('/calculator/<path:filename>')
 def calculator_widget_static(filename):
-    widget_dir = os.path.join(current_app.root_path, '..', 'calculator_widget')
+    widget_dir = os.path.join(
+        current_app.root_path,
+        '..',
+        'calculator_widget',
+    )
     return send_from_directory(widget_dir, filename)
 
 
@@ -73,7 +87,10 @@ def calculator_widget_static(filename):
 def units():
     form = UnitForm()
     if form.validate_on_submit():
-        unit = UnitOfMeasurement(name=form.name.data, abbreviation=form.abbreviation.data)
+        unit = UnitOfMeasurement(
+            name=form.name.data,
+            abbreviation=form.abbreviation.data,
+        )
         db.session.add(unit)
         db.session.commit()
         return redirect(url_for('admin.units'))
@@ -90,7 +107,11 @@ def edit_unit(unit_id):
         form.populate_obj(unit)
         db.session.commit()
         return redirect(url_for('admin.units'))
-    return render_template('units.html', form=form, units=UnitOfMeasurement.query.all())
+    return render_template(
+        'units.html',
+        form=form,
+        units=UnitOfMeasurement.query.all(),
+    )
 
 
 @admin_bp.route('/units/delete/<int:unit_id>')
@@ -124,7 +145,11 @@ def edit_category(category_id):
         form.populate_obj(category)
         db.session.commit()
         return redirect(url_for('admin.categories'))
-    return render_template('categories.html', form=form, categories=Category.query.all())
+    return render_template(
+        'categories.html',
+        form=form,
+        categories=Category.query.all(),
+    )
 
 
 @admin_bp.route('/categories/delete/<int:category_id>')
@@ -140,17 +165,28 @@ def delete_category(category_id):
 @login_required
 def services():
     form = ServiceForm()
-    form.category.choices = [(c.id, c.name) for c in Category.query.all()]
-    form.unit.choices = [(u.id, u.abbreviation) for u in UnitOfMeasurement.query.all()]
+    form.category.choices = [
+        (c.id, c.name) for c in Category.query.all()
+    ]
+    form.unit.choices = [
+        (u.id, u.abbreviation) for u in UnitOfMeasurement.query.all()
+    ]
     if form.validate_on_submit():
-        service = Service(name=form.name.data, price=form.price.data,
-                          category_id=form.category.data or None,
-                          unit_id=form.unit.data or None)
+        service = Service(
+            name=form.name.data,
+            price=form.price.data,
+            category_id=form.category.data or None,
+            unit_id=form.unit.data or None,
+        )
         db.session.add(service)
         db.session.commit()
         return redirect(url_for('admin.services'))
     services = Service.query.all()
-    return render_template('services.html', form=form, services=services)
+    return render_template(
+        'services.html',
+        form=form,
+        services=services,
+    )
 
 
 @admin_bp.route('/services/edit/<int:service_id>', methods=['GET', 'POST'])
@@ -158,8 +194,12 @@ def services():
 def edit_service(service_id):
     service = Service.query.get_or_404(service_id)
     form = ServiceForm(obj=service)
-    form.category.choices = [(c.id, c.name) for c in Category.query.all()]
-    form.unit.choices = [(u.id, u.abbreviation) for u in UnitOfMeasurement.query.all()]
+    form.category.choices = [
+        (c.id, c.name) for c in Category.query.all()
+    ]
+    form.unit.choices = [
+        (u.id, u.abbreviation) for u in UnitOfMeasurement.query.all()
+    ]
     if form.validate_on_submit():
         service.name = form.name.data
         service.price = form.price.data
@@ -167,7 +207,11 @@ def edit_service(service_id):
         service.unit_id = form.unit.data or None
         db.session.commit()
         return redirect(url_for('admin.services'))
-    return render_template('services.html', form=form, services=Service.query.all())
+    return render_template(
+        'services.html',
+        form=form,
+        services=Service.query.all(),
+    )
 
 
 @admin_bp.route('/services/delete/<int:service_id>')
@@ -193,7 +237,9 @@ def export_services():
             svc.unit.abbreviation if svc.unit else '',
         ])
     response = Response(output.getvalue(), mimetype='text/csv')
-    response.headers['Content-Disposition'] = 'attachment; filename=services.csv'
+    response.headers['Content-Disposition'] = (
+        'attachment; filename=services.csv'
+    )
     return response
 
 
@@ -235,7 +281,6 @@ def import_services():
         except ValueError:
             abort(400, 'Invalid price')
 
-
         category = None
         if category_name:
             category = Category.query.filter(
@@ -245,14 +290,17 @@ def import_services():
                 category = Category(name=category_name)
                 db.session.add(category)
 
-
         unit = None
         if unit_abbrev:
             unit = UnitOfMeasurement.query.filter(
-                func.lower(UnitOfMeasurement.abbreviation) == unit_abbrev.lower()
+                func.lower(UnitOfMeasurement.abbreviation)
+                == unit_abbrev.lower()
             ).first()
             if not unit:
-                unit = UnitOfMeasurement(name=unit_abbrev, abbreviation=unit_abbrev)
+                unit = UnitOfMeasurement(
+                    name=unit_abbrev,
+                    abbreviation=unit_abbrev,
+                )
                 db.session.add(unit)
 
         svc = Service.query.filter(
@@ -263,7 +311,12 @@ def import_services():
             svc.category = category
             svc.unit = unit
         else:
-            svc = Service(name=name, price=price, category=category, unit=unit)
+            svc = Service(
+                name=name,
+                price=price,
+                category=category,
+                unit=unit,
+            )
             db.session.add(svc)
 
     db.session.commit()
@@ -304,4 +357,3 @@ def settings():
             flash("Failed to save settings", "error")
 
     return render_template("settings.html", form=form)
-

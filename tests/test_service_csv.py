@@ -3,6 +3,7 @@ from io import StringIO, BytesIO
 from .test_admin_crud import login
 from admin_app.models import Service, Category, UnitOfMeasurement
 
+
 def test_export_services_csv(client, app):
     login(client)
     resp = client.get('/services/export')
@@ -21,16 +22,23 @@ def test_import_services_csv_success(client, app):
     with app.app_context():
         cat = Category.query.first()
         unit = UnitOfMeasurement.query.first()
-    csv_data = 'name,price,category,unit\nNew,2,%s,%s\nTest Service,3,%s,%s\n' % (
-        cat.name,
-        unit.abbreviation,
-        cat.name,
-        unit.abbreviation,
+    csv_data = (
+        'name,price,category,unit\nNew,2,%s,%s\nTest Service,3,%s,%s\n'
+        % (
+            cat.name,
+            unit.abbreviation,
+            cat.name,
+            unit.abbreviation,
+        )
     )
     data = {
         'file': (BytesIO(csv_data.encode('utf-8')), 'services.csv'),
     }
-    resp = client.post('/services/import', data=data, content_type='multipart/form-data')
+    resp = client.post(
+        '/services/import',
+        data=data,
+        content_type='multipart/form-data',
+    )
     assert resp.status_code == 302
     with app.app_context():
         assert Service.query.filter_by(name='New').first() is not None
@@ -44,7 +52,11 @@ def test_import_services_csv_creates_related(client, app):
     data = {
         'file': (BytesIO(csv_data.encode('utf-8')), 'services.csv'),
     }
-    resp = client.post('/services/import', data=data, content_type='multipart/form-data')
+    resp = client.post(
+        '/services/import',
+        data=data,
+        content_type='multipart/form-data',
+    )
     assert resp.status_code == 302
     with app.app_context():
         cat = Category.query.filter_by(name='BrandCat').first()
@@ -60,15 +72,25 @@ def test_import_services_csv_validation_error(client):
     login(client)
     bad_csv = 'wrong\n1,2,3\n'
     data = {'file': (BytesIO(bad_csv.encode('utf-8')), 'bad.csv')}
-    resp = client.post('/services/import', data=data, content_type='multipart/form-data')
+    resp = client.post(
+        '/services/import',
+        data=data,
+        content_type='multipart/form-data',
+    )
     assert resp.status_code == 400
 
 
 def test_import_services_csv_trims_and_case_insensitive(client, app):
     login(client)
-    csv_data = 'name,price,category,unit\n  test service ,2,  test category , PC \n'
+    csv_data = (
+        'name,price,category,unit\n  test service ,2,  test category , PC \n'
+    )
     data = {'file': (BytesIO(csv_data.encode('utf-8')), 'services.csv')}
-    resp = client.post('/services/import', data=data, content_type='multipart/form-data')
+    resp = client.post(
+        '/services/import',
+        data=data,
+        content_type='multipart/form-data',
+    )
     assert resp.status_code == 302
     with app.app_context():
         services = Service.query.filter_by(name='Test Service').all()
@@ -83,9 +105,15 @@ def test_import_services_csv_trims_and_case_insensitive(client, app):
 
 def test_import_services_csv_reuses_related_case_insensitive(client, app):
     login(client)
-    csv_data = 'name,price,category,unit\nOther,5, TEST CATEGORY , Pc \n'
+    csv_data = (
+        'name,price,category,unit\nOther,5, TEST CATEGORY , Pc \n'
+    )
     data = {'file': (BytesIO(csv_data.encode('utf-8')), 'services.csv')}
-    resp = client.post('/services/import', data=data, content_type='multipart/form-data')
+    resp = client.post(
+        '/services/import',
+        data=data,
+        content_type='multipart/form-data',
+    )
     assert resp.status_code == 302
     with app.app_context():
         svc = Service.query.filter_by(name='Other').first()

@@ -10,16 +10,28 @@ from admin_app.models import (
 
 
 def login(client):
-    return client.post('/login', data={'username': 'admin', 'password': 'admin'}, follow_redirects=True)
+    return client.post(
+        '/login',
+        data={'username': 'admin', 'password': 'admin'},
+        follow_redirects=True,
+    )
 
 
 def test_unit_crud(client, app):
     login(client)
-    client.post('/units', data={'name': 'Kilogram', 'abbreviation': 'kg'}, follow_redirects=True)
+    client.post(
+        '/units',
+        data={'name': 'Kilogram', 'abbreviation': 'kg'},
+        follow_redirects=True,
+    )
     with app.app_context():
         unit = UnitOfMeasurement.query.filter_by(abbreviation='kg').first()
         assert unit is not None
-    client.post(f'/units/edit/{unit.id}', data={'name': 'Gram', 'abbreviation': 'g'}, follow_redirects=True)
+    client.post(
+        f'/units/edit/{unit.id}',
+        data={'name': 'Gram', 'abbreviation': 'g'},
+        follow_redirects=True,
+    )
     with app.app_context():
         unit = db.session.get(UnitOfMeasurement, unit.id)
         assert unit.name == 'Gram'
@@ -35,7 +47,11 @@ def test_category_crud(client, app):
     with app.app_context():
         cat = Category.query.filter_by(name='New Cat').first()
         assert cat is not None
-    client.post(f'/categories/edit/{cat.id}', data={'name': 'Updated Cat'}, follow_redirects=True)
+    client.post(
+        f'/categories/edit/{cat.id}',
+        data={'name': 'Updated Cat'},
+        follow_redirects=True,
+    )
     with app.app_context():
         cat = db.session.get(Category, cat.id)
         assert cat.name == 'Updated Cat'
@@ -79,10 +95,18 @@ def test_update_default_settings(client, app):
         lang = Language.query.first()
         cur = Currency.query.first()
 
-    client.post('/settings', data={'language': str(lang.id), 'currency': str(cur.id)}, follow_redirects=True)
+    client.post(
+        '/settings',
+        data={'language': str(lang.id), 'currency': str(cur.id)},
+        follow_redirects=True,
+    )
 
     with app.app_context():
-        lang_setting = Setting.query.filter_by(key='default_language_id').first()
-        cur_setting = Setting.query.filter_by(key='default_currency_id').first()
+        lang_setting = Setting.query.filter_by(
+            key='default_language_id'
+        ).first()
+        cur_setting = Setting.query.filter_by(
+            key='default_currency_id'
+        ).first()
         assert lang_setting.value == str(lang.id)
         assert cur_setting.value == str(cur.id)
