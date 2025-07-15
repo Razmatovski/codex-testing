@@ -9,16 +9,8 @@ from admin_app.models import (
 )
 
 
-def login(client):
-    return client.post(
-        '/login',
-        data={'username': 'admin', 'password': 'admin'},
-        follow_redirects=True,
-    )
-
-
-def test_unit_crud(client, app):
-    login(client)
+def test_unit_crud(client, app, login):
+    login()
     client.post(
         '/units',
         data={'name': 'Kilogram', 'abbreviation': 'kg'},
@@ -41,8 +33,8 @@ def test_unit_crud(client, app):
         assert db.session.get(UnitOfMeasurement, unit.id) is None
 
 
-def test_category_crud(client, app):
-    login(client)
+def test_category_crud(client, app, login):
+    login()
     client.post('/categories', data={'name': 'New Cat'}, follow_redirects=True)
     with app.app_context():
         cat = Category.query.filter_by(name='New Cat').first()
@@ -60,8 +52,8 @@ def test_category_crud(client, app):
         assert db.session.get(Category, cat.id) is None
 
 
-def test_delete_multiple_categories(client, app):
-    login(client)
+def test_delete_multiple_categories(client, app, login):
+    login()
     names = ['A', 'B', 'C']
     for n in names:
         client.post('/categories', data={'name': n}, follow_redirects=True)
@@ -73,8 +65,8 @@ def test_delete_multiple_categories(client, app):
             assert db.session.get(Category, int(cid)) is None
 
 
-def test_delete_multiple_units(client, app):
-    login(client)
+def test_delete_multiple_units(client, app, login):
+    login()
     data = [
         ('Gram', 'g'),
         ('Kilogram', 'kg'),
@@ -103,8 +95,8 @@ def test_delete_multiple_units(client, app):
             assert db.session.get(UnitOfMeasurement, int(uid)) is None
 
 
-def test_delete_multiple_services(client, app):
-    login(client)
+def test_delete_multiple_services(client, app, login):
+    login()
     with app.app_context():
         category = Category.query.first()
         unit = UnitOfMeasurement.query.first()
@@ -139,8 +131,8 @@ def test_delete_multiple_services(client, app):
             assert db.session.get(Service, int(sid)) is None
 
 
-def test_service_crud(client, app):
-    login(client)
+def test_service_crud(client, app, login):
+    login()
     with app.app_context():
         category = Category.query.first()
         unit = UnitOfMeasurement.query.first()
@@ -168,8 +160,8 @@ def test_service_crud(client, app):
         assert db.session.get(Service, svc.id) is None
 
 
-def test_update_default_settings(client, app):
-    login(client)
+def test_update_default_settings(client, app, login):
+    login()
     with app.app_context():
         lang = Language.query.first()
         cur = Currency.query.first()

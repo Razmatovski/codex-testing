@@ -1,12 +1,12 @@
 import csv
 from io import StringIO, BytesIO
-from .test_admin_crud import login
+
 from admin_app.models import Service, Category, UnitOfMeasurement
 from sqlalchemy import func
 
 
-def test_export_services_csv(client, app):
-    login(client)
+def test_export_services_csv(client, app, login):
+    login()
     resp = client.get('/services/export')
     assert resp.status_code == 200
     data = resp.data.decode('utf-8')
@@ -18,8 +18,8 @@ def test_export_services_csv(client, app):
     assert names == {row['name'] for row in rows}
 
 
-def test_import_services_csv_success(client, app):
-    login(client)
+def test_import_services_csv_success(client, app, login):
+    login()
     with app.app_context():
         cat = Category.query.first()
         unit = UnitOfMeasurement.query.first()
@@ -47,8 +47,8 @@ def test_import_services_csv_success(client, app):
         assert svc.price == 3.0
 
 
-def test_import_services_csv_creates_related(client, app):
-    login(client)
+def test_import_services_csv_creates_related(client, app, login):
+    login()
     csv_data = 'name,price,category,unit\nBrand New,4,BrandCat,BC\n'
     data = {
         'file': (BytesIO(csv_data.encode('utf-8')), 'services.csv'),
@@ -69,8 +69,8 @@ def test_import_services_csv_creates_related(client, app):
         assert svc.unit_id == unit.id
 
 
-def test_import_services_csv_validation_error(client):
-    login(client)
+def test_import_services_csv_validation_error(client, login):
+    login()
     bad_csv = 'wrong\n1,2,3\n'
     data = {'file': (BytesIO(bad_csv.encode('utf-8')), 'bad.csv')}
     resp = client.post(
@@ -81,8 +81,8 @@ def test_import_services_csv_validation_error(client):
     assert resp.status_code == 400
 
 
-def test_import_services_csv_trims_and_case_insensitive(client, app):
-    login(client)
+def test_import_services_csv_trims_and_case_insensitive(client, app, login):
+    login()
     csv_data = (
         'name,price,category,unit\n  test service ,2,  test category , PC \n'
     )
@@ -104,8 +104,8 @@ def test_import_services_csv_trims_and_case_insensitive(client, app):
         assert svc.unit_id == unit.id
 
 
-def test_import_services_csv_reuses_related_case_insensitive(client, app):
-    login(client)
+def test_import_services_csv_reuses_related_case_insensitive(client, app, login):
+    login()
     csv_data = (
         'name,price,category,unit\nOther,5, TEST CATEGORY , Pc \n'
     )
@@ -127,8 +127,8 @@ def test_import_services_csv_reuses_related_case_insensitive(client, app):
         assert svc.unit_id == unit[0].id
 
 
-def test_import_services_handles_duplicate_categories(client, app):
-    login(client)
+def test_import_services_handles_duplicate_categories(client, app, login):
+    login()
     csv_data = (
         "name,price,category,unit\n"
         "First,1,DupeCat,pc\n"
