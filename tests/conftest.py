@@ -29,8 +29,8 @@ def app():
         db.session.commit()
         service = Service(name='Test Service', price=1.0,
                           category_id=category.id, unit_id=unit.id)
-        setting1 = Setting(key='default_currency_id', value=str(currency.id))
-        setting2 = Setting(key='default_language_id', value=str(lang.id))
+        setting1 = Setting(key='default_currency_id', value=currency.code)
+        setting2 = Setting(key='default_language_id', value=lang.code)
         user = User(username='admin')
         user.set_password('admin')
         db.session.add_all([service, setting1, setting2, user])

@@ -176,7 +176,7 @@ def test_update_default_settings(client, app):
 
     client.post(
         '/settings',
-        data={'language': str(lang.id), 'currency': str(cur.id)},
+        data={'language': lang.code, 'currency': cur.code},
         follow_redirects=True,
     )
 
@@ -187,5 +187,5 @@ def test_update_default_settings(client, app):
         cur_setting = Setting.query.filter_by(
             key='default_currency_id'
         ).first()
-        assert lang_setting.value == str(lang.id)
-        assert cur_setting.value == str(cur.id)
+        assert lang_setting.value == lang.code
+        assert cur_setting.value == cur.code
