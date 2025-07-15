@@ -73,6 +73,36 @@ def test_delete_multiple_categories(client, app):
             assert db.session.get(Category, int(cid)) is None
 
 
+def test_delete_multiple_units(client, app):
+    login(client)
+    data = [
+        ('Gram', 'g'),
+        ('Kilogram', 'kg'),
+        ('Meter', 'm'),
+    ]
+    for name, abbr in data:
+        client.post(
+            '/units',
+            data={'name': name, 'abbreviation': abbr},
+            follow_redirects=True,
+        )
+    with app.app_context():
+        ids = [
+            str(u.id)
+            for u in UnitOfMeasurement.query.filter(
+                UnitOfMeasurement.abbreviation.in_([d[1] for d in data])
+            ).all()
+        ]
+    client.post(
+        '/units/delete-selected',
+        data={'unit_ids': ids},
+        follow_redirects=True,
+    )
+    with app.app_context():
+        for uid in ids:
+            assert db.session.get(UnitOfMeasurement, int(uid)) is None
+
+
 def test_service_crud(client, app):
     login(client)
     with app.app_context():

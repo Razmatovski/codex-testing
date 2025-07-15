@@ -123,6 +123,19 @@ def delete_unit(unit_id):
     return redirect(url_for('admin.units'))
 
 
+@admin_bp.route('/units/delete-selected', methods=['POST'])
+@login_required
+def delete_selected_units():
+    ids = request.form.getlist('unit_ids')
+    for uid in ids:
+        unit = UnitOfMeasurement.query.get(uid)
+        if unit:
+            db.session.delete(unit)
+    if ids:
+        db.session.commit()
+    return redirect(url_for('admin.units'))
+
+
 @admin_bp.route('/categories', methods=['GET', 'POST'])
 @login_required
 def categories():

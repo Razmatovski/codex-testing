@@ -8,10 +8,18 @@
   <p>{{ form.abbreviation.label }} {{ form.abbreviation() }}</p>
   <p>{{ form.submit() }}</p>
 </form>
+<form method="post" action="{{ url_for('admin.delete_selected_units') }}">
 <table>
-  <tr><th>ID</th><th>Name</th><th>Abbrev.</th><th>Actions</th></tr>
+  <tr>
+    <th>Select</th>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Abbrev.</th>
+    <th>Actions</th>
+  </tr>
   {% for unit in units %}
   <tr>
+    <td><input type="checkbox" name="unit_ids" value="{{ unit.id }}"></td>
     <td>{{ unit.id }}</td>
     <td>{{ unit.name }}</td>
     <td>{{ unit.abbreviation }}</td>
@@ -22,4 +30,6 @@
   </tr>
   {% endfor %}
 </table>
+  <p><input type="submit" value="Delete selected"></p>
+</form>
 {% endblock %}
