@@ -2,11 +2,38 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
-migrate = Migrate()
+
 db = SQLAlchemy()
 login_manager = LoginManager()
+migrate = Migrate()
 
 from .models import User  # noqa: E402
+
+
+def create_default_data() -> None:
+    """Insert default languages, currencies, units and the admin user."""
+    from .models import Language, Currency, UnitOfMeasurement, User
+
+    # Default languages
+    en = Language(code="en", name="English")
+    ru = Language(code="ru", name="Russian")
+    pl = Language(code="pl", name="Polish")
+    uk = Language(code="uk", name="Ukrainian")
+
+    # Default currencies
+    usd = Currency(code="USD", name="US Dollar", symbol="$")
+    eur = Currency(code="EUR", name="Euro", symbol="€")
+    pln = Currency(code="PLN", name="Polish Zloty", symbol="zł")
+
+    # Default units of measurement
+    kg = UnitOfMeasurement(name="Kilogram", abbreviation="kg")
+    pc = UnitOfMeasurement(name="Piece", abbreviation="pc")
+
+    admin = User(username="admin")
+    admin.set_password("admin")
+
+    db.session.add_all([en, ru, pl, uk, usd, eur, pln, kg, pc, admin])
+    db.session.commit()
 
 
 def create_app():
@@ -39,7 +66,6 @@ def register_cli(app: Flask) -> None:
     @app.cli.command("init-db")
     def init_db_command():
         """Initialize database and create default data."""
-        from .models import Language, Currency, UnitOfMeasurement
 
         tables = db.inspect(db.engine).get_table_names()
         if tables:
@@ -54,56 +80,15 @@ def register_cli(app: Flask) -> None:
             db.drop_all()
 
         db.create_all()
-
-        # Default languages
-        en = Language(code="en", name="English")
-        ru = Language(code="ru", name="Russian")
-        pl = Language(code="pl", name="Polish")
-        uk = Language(code="uk", name="Ukrainian")
-
-        # Default currencies
-        usd = Currency(code="USD", name="US Dollar", symbol="$")
-        eur = Currency(code="EUR", name="Euro", symbol="€")
-        pln = Currency(code="PLN", name="Polish Zloty", symbol="zł")
-
-        # Default units of measurement
-        kg = UnitOfMeasurement(name="Kilogram", abbreviation="kg")
-        pc = UnitOfMeasurement(name="Piece", abbreviation="pc")
-
-        admin = User(username="admin")
-        admin.set_password("admin")
-
-        db.session.add_all([en, ru, pl, uk, usd, eur, pln, kg, pc, admin])
-        db.session.commit()
+        create_default_data()
         print("Database initialized")
 
 
 def ensure_db_initialized(app: Flask) -> None:
     """Create database tables and default data if none exist."""
-    from .models import Language, Currency, UnitOfMeasurement
 
     with app.app_context():
         tables = db.inspect(db.engine).get_table_names()
         if not tables:
             db.create_all()
-
-            # Default languages
-            en = Language(code="en", name="English")
-            ru = Language(code="ru", name="Russian")
-            pl = Language(code="pl", name="Polish")
-            uk = Language(code="uk", name="Ukrainian")
-
-            # Default currencies
-            usd = Currency(code="USD", name="US Dollar", symbol="$")
-            eur = Currency(code="EUR", name="Euro", symbol="€")
-            pln = Currency(code="PLN", name="Polish Zloty", symbol="zł")
-
-            # Default units of measurement
-            kg = UnitOfMeasurement(name="Kilogram", abbreviation="kg")
-            pc = UnitOfMeasurement(name="Piece", abbreviation="pc")
-
-            admin = User(username="admin")
-            admin.set_password("admin")
-
-            db.session.add_all([en, ru, pl, uk, usd, eur, pln, kg, pc, admin])
-            db.session.commit()
+            create_default_data()
