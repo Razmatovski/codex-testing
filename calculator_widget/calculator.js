@@ -29,6 +29,19 @@
       export: 'CSV',
       emailPlaceholder: 'email',
       selectAll: '\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u0432\u0441\u0435'
+    },
+    pl: {
+      service: 'Us\u0142uga',
+      quantity: 'Liczba',
+      unitPrice: 'Cena jednostkowa',
+      total: 'Suma',
+      addItem: 'Dodaj pozycj\u0119',
+      removeSelected: 'Usu\u0144 zaznaczone',
+      grandTotal: 'Suma ca\u0142kowita',
+      send: 'Wy\u015blij',
+      export: 'Eksportuj CSV',
+      emailPlaceholder: 'tw\xf3j email',
+      selectAll: 'Zaznacz wszystko'
     }
   };
 
@@ -306,8 +319,9 @@
 
     state.currencies.forEach(c => {
       const opt = createElem('option');
-      opt.value = c.id;
-      opt.textContent = c.code;
+      const val = c.code || c.id;
+      opt.value = val;
+      opt.textContent = val;
       currSelect.appendChild(opt);
     });
     currSelect.value = state.currency;

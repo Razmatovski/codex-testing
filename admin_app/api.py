@@ -22,7 +22,12 @@ def calculator_data():
             for lang in Language.query.all()
         ]
         currencies = [
-            {"id": cur.code, "symbol": cur.symbol, "name": cur.name}
+            {
+                "id": cur.code,
+                "code": cur.code,
+                "symbol": cur.symbol,
+                "name": cur.name,
+            }
             for cur in Currency.query.all()
         ]
         units = [
