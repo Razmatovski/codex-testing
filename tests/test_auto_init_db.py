@@ -12,11 +12,7 @@ def test_auto_init_db(tmp_path, monkeypatch):
     ensure_db_initialized(app)
 
     with app.app_context():
-        tables = (
-            db.engine.table_names()
-            if hasattr(db.engine, "table_names")
-            else db.inspect(db.engine).get_table_names()
-        )
+        tables = db.inspect(db.engine).get_table_names()
         assert tables
         user = User.query.filter_by(username="admin").first()
         assert user is not None

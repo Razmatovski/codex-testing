@@ -1,5 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, FloatField, SelectField
+from wtforms import (
+    StringField,
+    PasswordField,
+    SubmitField,
+    FloatField,
+    SelectField,
+)
 from wtforms.validators import DataRequired
 
 
@@ -28,8 +34,6 @@ class ServiceForm(FlaskForm):
     submit = SubmitField('Save')
 
 
-
-
 class DefaultSettingsForm(FlaskForm):
     language = SelectField('Default language', coerce=int)
     currency = SelectField('Default currency', coerce=int)
@@ -43,5 +47,9 @@ class DefaultSettingsForm(FlaskForm):
             (lang.id, lang.name) for lang in Language.query.all()
         ]
         self.currency.choices = [
-            (cur.id, f"{cur.code} - {cur.name}") for cur in Currency.query.all()
+            (
+                cur.id,
+                f"{cur.code} - {cur.name}",
+            )
+            for cur in Currency.query.all()
         ]

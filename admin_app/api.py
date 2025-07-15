@@ -1,8 +1,14 @@
 from flask import Blueprint, jsonify, request, current_app
 import smtplib
 from email.message import EmailMessage
-from .models import Language, Currency, UnitOfMeasurement, Category, Service, Setting
-from . import db
+from .models import (
+    Language,
+    Currency,
+    UnitOfMeasurement,
+    Category,
+    Service,
+    Setting,
+)
 import re
 
 api_bp = Blueprint('api', __name__, url_prefix='/api/v1')
@@ -20,7 +26,11 @@ def calculator_data():
             for cur in Currency.query.all()
         ]
         units = [
-            {"id": unit.id, "name": unit.name, "abbreviation": unit.abbreviation}
+            {
+                "id": unit.id,
+                "name": unit.name,
+                "abbreviation": unit.abbreviation,
+            }
             for unit in UnitOfMeasurement.query.all()
         ]
         categories = []
@@ -76,26 +86,56 @@ def send_calculation():
     grand_total = data.get('grand_total_price')
 
     if not user_email or not EMAIL_REGEX.match(user_email):
-        return jsonify({"status": "error", "message": "Invalid email address."}), 400
+        return jsonify(
+            {"status": "error", "message": "Invalid email address."}
+        ), 400
 
-    if not language_code or not Language.query.filter_by(code=language_code).first():
-        return jsonify({"status": "error", "message": "Invalid language code."}), 400
+    if not language_code or not Language.query.filter_by(
+        code=language_code
+    ).first():
+        return jsonify(
+            {"status": "error", "message": "Invalid language code."}
+        ), 400
 
     if not items or not isinstance(items, list):
-        return jsonify({"status": "error", "message": "calculation_items must be a non-empty list."}), 400
+        return jsonify(
+            {
+                "status": "error",
+                "message": "calculation_items must be a non-empty list.",
+            }
+        ), 400
 
     for item in items:
-        if not all(k in item for k in ["quantity", "price_per_unit", "item_total_price"]):
-            return jsonify({"status": "error", "message": "Invalid item structure."}), 400
-        if not (_is_number(item["quantity"]) and _is_number(item["price_per_unit"]) and _is_number(item["item_total_price"])):
-            return jsonify({"status": "error", "message": "Numeric values required in items."}), 400
+        if not all(
+            k in item
+            for k in ["quantity", "price_per_unit", "item_total_price"]
+        ):
+            return jsonify(
+                {"status": "error", "message": "Invalid item structure."}
+            ), 400
+        if not (
+            _is_number(item["quantity"])
+            and _is_number(item["price_per_unit"])
+            and _is_number(item["item_total_price"])
+        ):
+            return jsonify(
+                {
+                    "status": "error",
+                    "message": "Numeric values required in items.",
+                }
+            ), 400
 
     if not grand_total or not _is_number(grand_total):
-        return jsonify({"status": "error", "message": "Invalid grand_total_price."}), 400
+        return jsonify(
+            {"status": "error", "message": "Invalid grand_total_price."}
+        ), 400
 
     message = EmailMessage()
     message['Subject'] = 'Calculation Results'
-    sender = current_app.config.get('SMTP_USERNAME', 'no-reply@example.com') or 'no-reply@example.com'
+    sender = (
+        current_app.config.get("SMTP_USERNAME", "no-reply@example.com")
+        or "no-reply@example.com"
+    )
     message['From'] = sender
     message['To'] = user_email
     message.set_content(f'Total price: {grand_total}')
@@ -114,6 +154,13 @@ def send_calculation():
                 server.login(username, password or '')
             server.send_message(message)
     except smtplib.SMTPException:
-        return jsonify({"status": "error", "message": "Failed to send email."}), 500
+        return jsonify(
+            {"status": "error", "message": "Failed to send email."}
+        ), 500
 
-    return jsonify({"status": "success", "message": "Calculation successfully sent to your email."}), 200
+    return jsonify(
+        {
+            "status": "success",
+            "message": "Calculation successfully sent to your email.",
+        }
+    ), 200
