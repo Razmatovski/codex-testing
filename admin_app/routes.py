@@ -384,21 +384,21 @@ def settings():
 
     if request.method == "GET":
         if lang_setting:
-            form.language.data = int(lang_setting.value)
+            form.language.data = lang_setting.value
         if cur_setting:
-            form.currency.data = int(cur_setting.value)
+            form.currency.data = cur_setting.value
 
     if form.validate_on_submit():
         try:
             if not lang_setting:
                 lang_setting = Setting(key="default_language_id")
                 db.session.add(lang_setting)
-            lang_setting.value = str(form.language.data)
+            lang_setting.value = form.language.data
 
             if not cur_setting:
                 cur_setting = Setting(key="default_currency_id")
                 db.session.add(cur_setting)
-            cur_setting.value = str(form.currency.data)
+            cur_setting.value = form.currency.data
 
             db.session.commit()
             flash("Settings saved")
