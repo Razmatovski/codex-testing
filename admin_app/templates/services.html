@@ -26,4 +26,11 @@
   </tr>
   {% endfor %}
 </table>
+<p>
+  <a href="{{ url_for('admin.export_services') }}">Export CSV</a>
+</p>
+<form action="{{ url_for('admin.import_services') }}" method="post" enctype="multipart/form-data">
+  <p><input type="file" name="file"></p>
+  <p><input type="submit" value="Import CSV"></p>
+</form>
 {% endblock %}

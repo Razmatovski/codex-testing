@@ -1,7 +1,20 @@
-from flask import Blueprint, redirect, render_template, url_for, request, flash, send_from_directory, current_app
+from flask import (
+    Blueprint,
+    redirect,
+    render_template,
+    url_for,
+    request,
+    flash,
+    send_from_directory,
+    current_app,
+    Response,
+    abort,
+)
 from flask_login import login_user, logout_user, login_required, current_user
 
 from . import db
+import csv
+import io
 from .forms import (
     LoginForm,
     UnitForm,
@@ -162,6 +175,81 @@ def delete_service(service_id):
     service = Service.query.get_or_404(service_id)
     db.session.delete(service)
     db.session.commit()
+    return redirect(url_for('admin.services'))
+
+
+@admin_bp.route('/services/export')
+@login_required
+def export_services():
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['name', 'price', 'category', 'unit'])
+    for svc in Service.query.all():
+        writer.writerow([
+            svc.name,
+            f"{svc.price}",
+            svc.category.name if svc.category else '',
+            svc.unit.abbreviation if svc.unit else '',
+        ])
+    response = Response(output.getvalue(), mimetype='text/csv')
+    response.headers['Content-Disposition'] = 'attachment; filename=services.csv'
+    return response
+
+
+@admin_bp.route('/services/import', methods=['POST'])
+@login_required
+def import_services():
+    file = request.files.get('file')
+    if not file or file.filename == '':
+        abort(400, 'No file provided')
+
+    try:
+        stream = io.StringIO(file.stream.read().decode('utf-8'))
+        reader = csv.DictReader(stream)
+    except Exception:
+        abort(400, 'Invalid CSV')
+
+    required = {'name', 'price', 'category', 'unit'}
+    if not reader.fieldnames or not required.issubset(reader.fieldnames):
+        abort(400, 'Missing columns')
+
+    for row in reader:
+        name = row.get('name')
+        price = row.get('price')
+        category_name = row.get('category')
+        unit_abbrev = row.get('unit')
+
+        if not name or not price:
+            abort(400, 'Missing data')
+
+        try:
+            price = float(price)
+        except ValueError:
+            abort(400, 'Invalid price')
+
+        category = None
+        if category_name:
+            category = Category.query.filter_by(name=category_name).first()
+            if not category:
+                abort(400, 'Unknown category')
+
+        unit = None
+        if unit_abbrev:
+            unit = UnitOfMeasurement.query.filter_by(abbreviation=unit_abbrev).first()
+            if not unit:
+                abort(400, 'Unknown unit')
+
+        svc = Service.query.filter_by(name=name).first()
+        if svc:
+            svc.price = price
+            svc.category = category
+            svc.unit = unit
+        else:
+            svc = Service(name=name, price=price, category=category, unit=unit)
+            db.session.add(svc)
+
+    db.session.commit()
+    flash('Services imported')
     return redirect(url_for('admin.services'))
 
 
