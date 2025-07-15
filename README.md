@@ -83,6 +83,21 @@ Once the server is running you can open the calculator widget directly at
 `http://localhost:5000/calculator/`. A link to this page is also available in
 the admin navigation bar.
 
+## Database migrations
+
+The project ships with **Flask-Migrate**. After installing the dependencies you
+can create migration scripts and upgrade the database schema using the standard
+Flask-Migrate commands:
+
+```bash
+flask db init      # run once to create migrations folder
+flask db migrate   # generate migration scripts
+flask db upgrade   # apply migrations
+```
+
+These commands use the same configuration as the application and work with the
+`SQLALCHEMY_DATABASE_URI` environment variable.
+
 ## Building the widget
 
 The static widget lives in the `calculator_widget` directory. To use it as is,
