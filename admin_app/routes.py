@@ -161,6 +161,19 @@ def delete_category(category_id):
     return redirect(url_for('admin.categories'))
 
 
+@admin_bp.route('/categories/delete-selected', methods=['POST'])
+@login_required
+def delete_selected_categories():
+    ids = request.form.getlist('category_ids')
+    for cid in ids:
+        category = Category.query.get(cid)
+        if category:
+            db.session.delete(category)
+    if ids:
+        db.session.commit()
+    return redirect(url_for('admin.categories'))
+
+
 @admin_bp.route('/services', methods=['GET', 'POST'])
 @login_required
 def services():
