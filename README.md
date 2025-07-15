@@ -97,7 +97,9 @@ Once the server is running you can open the calculator widget directly at
 the admin navigation bar.
 
 Use the **Settings** page to select the default language and currency shown in
-the widget.
+the widget. When embedded on a website, the widget will automatically choose
+the language and currency that best match the visitor's browser preferences and
+fall back to the configured defaults if no exact match is found.
 
 ## Database migrations
 
