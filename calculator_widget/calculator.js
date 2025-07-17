@@ -16,6 +16,7 @@
       send: 'Send email',
       export: 'Export CSV',
       emailPlaceholder: 'your@email',
+      chooseService: 'Select service',
       clearAll: 'Clear all',
       negativeQuantityError: 'Quantity cannot be negative.'
     },
@@ -30,6 +31,7 @@
       send: '\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c',
       export: 'CSV',
       emailPlaceholder: 'email',
+      chooseService: '\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0443\u0441\u043b\u0443\u0433\u0443',
       selectAll: '\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u0432\u0441\u0435',
       clearAll: '\u041e\u0447\u0438\u0441\u0442\u0438\u0442\u044c \u0432\u0441\u0435',
       negativeQuantityError: '\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043d\u0435 \u043c\u043e\u0436\u0435\u0442 \u0431\u044b\u0442\u044c \u043e\u0442\u0440\u0438\u0446\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u043c.'
@@ -45,6 +47,7 @@
       send: 'Wy\u015blij',
       export: 'Eksportuj CSV',
       emailPlaceholder: 'tw\xf3j email',
+      chooseService: 'Wybierz us\u0142ug\u0119',
       selectAll: 'Zaznacz wszystko',
       clearAll: 'Wyczy\u015b\u0107 wszystko',
       negativeQuantityError: 'Ilo\u015b\u0107 nie mo\u017ce by\u0107 ujemna.'
@@ -60,6 +63,7 @@
       send: '\u0412\u0456\u0434\u043F\u0440\u0430\u0432\u0438\u0442\u0438',
       export: 'CSV',
       emailPlaceholder: '\u0442\u0432\u0456\u0439 email',
+      chooseService: '\u041e\u0431\u0435\u0440\u0456\u0442\u044c \u043f\u043e\u0441\u043b\u0443\u0433\u0443',
       selectAll: '\u041e\u0431\u0440\u0430\u0442\u0438 \u0432\u0441\u0435',
       clearAll: '\u041e\u0447\u0438\u0441\u0442\u0438\u0442\u0438 \u0432\u0441\u0435',
       negativeQuantityError: '\u041a\u0456\u043b\u044c\u043a\u0456\u0441\u0442\u044c \u043d\u0435 \u043c\u043e\u0436\u0435 \u0431\u0443\u0442\u0438 \u0432\u0456\u0434\u0454\u043c\u043d\u043e\u044e.'
@@ -135,6 +139,12 @@
     const tr = createElem('tr', 'row-enter');
     const tdService = createElem('td');
     const select = createElem('select');
+    const placeholder = createElem('option');
+    placeholder.value = '';
+    placeholder.textContent = t('chooseService');
+    placeholder.disabled = true;
+    placeholder.selected = true;
+    select.appendChild(placeholder);
     state.categories.forEach(cat => {
       const optGroup = createElem('optgroup');
       optGroup.label = cat.name;
@@ -379,6 +389,9 @@
       cells[1].setAttribute('data-label-qty', t('quantity'));
       cells[2].setAttribute('data-label-price', t('unitPrice'));
       cells[3].setAttribute('data-label-total', t('total'));
+      if (item.service.options[0]) {
+        item.service.options[0].textContent = t('chooseService');
+      }
     });
   }
 
