@@ -312,8 +312,8 @@
   table.appendChild(tbody);
 
   const controls = createElem('div', 'controls');
-  const langSelect = createElem('select');
-  const currSelect = createElem('select');
+  const langSelect = createElem('select', 'minimal-select');
+  const currSelect = createElem('select', 'minimal-select');
   controls.appendChild(langSelect);
   controls.appendChild(currSelect);
 
