@@ -28,7 +28,7 @@ def test_unit_crud(client, app, login):
         unit = db.session.get(UnitOfMeasurement, unit.id)
         assert unit.name == 'Gram'
         assert unit.abbreviation == 'g'
-    client.get(f'/units/delete/{unit.id}', follow_redirects=True)
+    client.post(f'/units/delete/{unit.id}', follow_redirects=True)
     with app.app_context():
         assert db.session.get(UnitOfMeasurement, unit.id) is None
 
@@ -47,7 +47,7 @@ def test_category_crud(client, app, login):
     with app.app_context():
         cat = db.session.get(Category, cat.id)
         assert cat.name == 'Updated Cat'
-    client.get(f'/categories/delete/{cat.id}', follow_redirects=True)
+    client.post(f'/categories/delete/{cat.id}', follow_redirects=True)
     with app.app_context():
         assert db.session.get(Category, cat.id) is None
 
@@ -155,7 +155,7 @@ def test_service_crud(client, app, login):
         svc = db.session.get(Service, svc.id)
         assert svc.name == 'Svc2'
         assert svc.price == 10
-    client.get(f'/services/delete/{svc.id}', follow_redirects=True)
+    client.post(f'/services/delete/{svc.id}', follow_redirects=True)
     with app.app_context():
         assert db.session.get(Service, svc.id) is None
 

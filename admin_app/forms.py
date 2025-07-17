@@ -61,3 +61,9 @@ class DefaultSettingsForm(FlaskForm):
             )
             for cur in Currency.query.all()
         ]
+
+
+class DeleteForm(FlaskForm):
+    """Simple form providing CSRF protection for delete actions."""
+
+    submit = SubmitField('Delete')

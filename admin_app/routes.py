@@ -22,6 +22,7 @@ from .forms import (
     CategoryForm,
     ServiceForm,
     DefaultSettingsForm,
+    DeleteForm,
 )
 from .models import (
     User,
@@ -86,6 +87,7 @@ def calculator_widget_static(filename):
 @login_required
 def units():
     form = UnitForm()
+    delete_form = DeleteForm()
     if form.validate_on_submit():
         unit = UnitOfMeasurement(
             name=form.name.data,
@@ -95,7 +97,7 @@ def units():
         db.session.commit()
         return redirect(url_for('admin.units'))
     units = UnitOfMeasurement.query.all()
-    return render_template('units.html', form=form, units=units)
+    return render_template('units.html', form=form, delete_form=delete_form, units=units)
 
 
 @admin_bp.route('/units/edit/<int:unit_id>', methods=['GET', 'POST'])
@@ -103,6 +105,7 @@ def units():
 def edit_unit(unit_id):
     unit = UnitOfMeasurement.query.get_or_404(unit_id)
     form = UnitForm(obj=unit)
+    delete_form = DeleteForm()
     if form.validate_on_submit():
         form.populate_obj(unit)
         db.session.commit()
@@ -110,11 +113,12 @@ def edit_unit(unit_id):
     return render_template(
         'units.html',
         form=form,
+        delete_form=delete_form,
         units=UnitOfMeasurement.query.all(),
     )
 
 
-@admin_bp.route('/units/delete/<int:unit_id>')
+@admin_bp.route('/units/delete/<int:unit_id>', methods=['POST'])
 @login_required
 def delete_unit(unit_id):
     unit = UnitOfMeasurement.query.get_or_404(unit_id)
@@ -140,13 +144,14 @@ def delete_selected_units():
 @login_required
 def categories():
     form = CategoryForm()
+    delete_form = DeleteForm()
     if form.validate_on_submit():
         category = Category(name=form.name.data)
         db.session.add(category)
         db.session.commit()
         return redirect(url_for('admin.categories'))
     categories = Category.query.all()
-    return render_template('categories.html', form=form, categories=categories)
+    return render_template('categories.html', form=form, delete_form=delete_form, categories=categories)
 
 
 @admin_bp.route('/categories/edit/<int:category_id>', methods=['GET', 'POST'])
@@ -154,6 +159,7 @@ def categories():
 def edit_category(category_id):
     category = Category.query.get_or_404(category_id)
     form = CategoryForm(obj=category)
+    delete_form = DeleteForm()
     if form.validate_on_submit():
         form.populate_obj(category)
         db.session.commit()
@@ -161,11 +167,12 @@ def edit_category(category_id):
     return render_template(
         'categories.html',
         form=form,
+        delete_form=delete_form,
         categories=Category.query.all(),
     )
 
 
-@admin_bp.route('/categories/delete/<int:category_id>')
+@admin_bp.route('/categories/delete/<int:category_id>', methods=['POST'])
 @login_required
 def delete_category(category_id):
     category = Category.query.get_or_404(category_id)
@@ -191,6 +198,7 @@ def delete_selected_categories():
 @login_required
 def services():
     form = ServiceForm()
+    delete_form = DeleteForm()
     form.category.choices = [
         (c.id, c.name) for c in Category.query.all()
     ]
@@ -211,6 +219,7 @@ def services():
     return render_template(
         'services.html',
         form=form,
+        delete_form=delete_form,
         services=services,
     )
 
@@ -220,6 +229,7 @@ def services():
 def edit_service(service_id):
     service = Service.query.get_or_404(service_id)
     form = ServiceForm(obj=service)
+    delete_form = DeleteForm()
     form.category.choices = [
         (c.id, c.name) for c in Category.query.all()
     ]
@@ -236,11 +246,12 @@ def edit_service(service_id):
     return render_template(
         'services.html',
         form=form,
+        delete_form=delete_form,
         services=Service.query.all(),
     )
 
 
-@admin_bp.route('/services/delete/<int:service_id>')
+@admin_bp.route('/services/delete/<int:service_id>', methods=['POST'])
 @login_required
 def delete_service(service_id):
     service = Service.query.get_or_404(service_id)

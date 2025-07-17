@@ -27,7 +27,10 @@
     <td data-label="Abbrev.">{{ unit.abbreviation }}</td>
     <td data-label="Actions">
       <a href="{{ url_for('admin.edit_unit', unit_id=unit.id) }}">edit</a>
-      <a href="{{ url_for('admin.delete_unit', unit_id=unit.id) }}">delete</a>
+      <form method="post" action="{{ url_for('admin.delete_unit', unit_id=unit.id) }}" style="display:inline">
+        {{ delete_form.csrf_token }}
+        <button type="submit">delete</button>
+      </form>
     </td>
   </tr>
   {% endfor %}

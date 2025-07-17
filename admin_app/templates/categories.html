@@ -25,7 +25,10 @@
     <td data-label="Name">{{ category.name }}</td>
     <td data-label="Actions">
       <a href="{{ url_for('admin.edit_category', category_id=category.id) }}">edit</a>
-      <a href="{{ url_for('admin.delete_category', category_id=category.id) }}">delete</a>
+      <form method="post" action="{{ url_for('admin.delete_category', category_id=category.id) }}" style="display:inline">
+        {{ delete_form.csrf_token }}
+        <button type="submit">delete</button>
+      </form>
     </td>
   </tr>
   {% endfor %}
