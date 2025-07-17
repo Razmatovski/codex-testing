@@ -5,8 +5,10 @@
 <p class="help">These options control the widget’s default language and currency.</p>
 <form method="post">
   {{ form.hidden_tag() }}
-  <p>{{ form.language.label }} {{ form.language() }}</p>
-  <p>{{ form.currency.label }} {{ form.currency() }}</p>
-  <p>{{ form.submit() }}</p>
+  <div class="form-controls">
+    <p>{{ form.language.label }} {{ form.language() }}</p>
+    <p>{{ form.currency.label }} {{ form.currency() }}</p>
+    <p>{{ form.submit(class_='btn') }}</p>
+  </div>
 </form>
 {% endblock %}
