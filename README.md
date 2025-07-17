@@ -81,7 +81,8 @@ your data using the command:
 ```bash
 flask --app run.py sync-default-data
 ```
-Run this after applying any database migrations. Existing installations
+Run `flask db upgrade` first to apply any pending migrations, then execute
+this command. Existing installations
 should execute it whenever pulling updates that introduce new languages
 or currencies so that the latest default records are inserted without
 overwriting your data.
@@ -115,6 +116,8 @@ flask db upgrade   # apply migrations
 
 These commands use the same configuration as the application and work with the
 `SQLALCHEMY_DATABASE_URI` environment variable.
+Whenever you pull updates that include new migrations, run
+`flask db upgrade` to keep your database schema up to date.
 
 ## Building the widget
 
