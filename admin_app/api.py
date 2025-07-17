@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request, current_app
 import smtplib
 from email.message import EmailMessage
+from sqlalchemy.orm import joinedload
 from .models import (
     Language,
     Currency,
@@ -39,20 +40,23 @@ def calculator_data():
             for unit in UnitOfMeasurement.query.all()
         ]
         categories = []
-        for cat in Category.query.all():
-            services = []
-            for srv in Service.query.filter_by(category_id=cat.id).all():
-                services.append({
+        for cat in Category.query.options(joinedload(Category.services)).all():
+            services = [
+                {
                     "id": srv.id,
                     "name": srv.name,
                     "price": f"{srv.price:.2f}",
                     "unit_id": srv.unit_id,
-                })
-            categories.append({
-                "id": cat.id,
-                "name": cat.name,
-                "services": services,
-            })
+                }
+                for srv in cat.services
+            ]
+            categories.append(
+                {
+                    "id": cat.id,
+                    "name": cat.name,
+                    "services": services,
+                }
+            )
         settings = {}
         for key in ["default_currency_id", "default_language_id"]:
             s = Setting.query.filter_by(key=key).first()
