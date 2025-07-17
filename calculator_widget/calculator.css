@@ -1,32 +1,100 @@
 #calculator-widget {
-  max-width: 600px;
-  margin: 0 auto;
-  font-family: sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  font-family: 'Helvetica Neue', sans-serif;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 #calculator-widget table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 20px;
 }
 
 #calculator-widget th,
 #calculator-widget td {
-  border: 1px solid #ccc;
-  padding: 4px;
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+#calculator-widget th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+#calculator-widget tr:nth-child(even) {
+  background-color: #f2f2f2;
 }
 
 #calculator-widget .controls,
 #calculator-widget .grand-total {
-  margin-top: 10px;
+  margin-top: 20px;
+  padding: 10px 0;
 }
 
 #calculator-widget button {
-  margin-right: 5px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s;
 }
+
+#calculator-widget button:hover {
+  background-color: #45a049;
+}
+
+#calculator-widget .remove-btn {
+  background-color: #f44336;
+}
+
+#calculator-widget .remove-btn:hover {
+  background-color: #da190b;
+}
+
 
 #calculator-widget .select-col {
   text-align: center;
-  width: 30px;
+  width: 50px;
+}
+
+.error-container {
+  color: red;
+  margin-bottom: 10px;
+}
+
+.row-enter {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.row-exit {
+  animation: fadeOut 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+
+#calculator-widget input[type="number"],
+#calculator-widget select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
 @media (max-width: 500px) {

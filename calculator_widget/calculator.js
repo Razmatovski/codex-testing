@@ -15,7 +15,9 @@
       grandTotal: 'Grand total',
       send: 'Send email',
       export: 'Export CSV',
-      emailPlaceholder: 'your@email'
+      emailPlaceholder: 'your@email',
+      clearAll: 'Clear all',
+      negativeQuantityError: 'Quantity cannot be negative.'
     },
     ru: {
       service: '\u0423\u0441\u043b\u0443\u0433\u0430',
@@ -28,7 +30,9 @@
       send: '\u041e\u0442\u043f\u0440\u0430\u0432\u0438\u0442\u044c',
       export: 'CSV',
       emailPlaceholder: 'email',
-      selectAll: '\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u0432\u0441\u0435'
+      selectAll: '\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u0432\u0441\u0435',
+      clearAll: '\u041e\u0447\u0438\u0441\u0442\u0438\u0442\u044c \u0432\u0441\u0435',
+      negativeQuantityError: '\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043d\u0435 \u043c\u043e\u0436\u0435\u0442 \u0431\u044b\u0442\u044c \u043e\u0442\u0440\u0438\u0446\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u043c.'
     },
     pl: {
       service: 'Us\u0142uga',
@@ -41,7 +45,9 @@
       send: 'Wy\u015blij',
       export: 'Eksportuj CSV',
       emailPlaceholder: 'tw\xf3j email',
-      selectAll: 'Zaznacz wszystko'
+      selectAll: 'Zaznacz wszystko',
+      clearAll: 'Wyczy\u015b\u0107 wszystko',
+      negativeQuantityError: 'Ilo\u015b\u0107 nie mo\u017ce by\u0107 ujemna.'
     },
     uk: {
       service: '\u041F\u043E\u0441\u043B\u0443\u0433\u0430',
@@ -54,7 +60,9 @@
       send: '\u0412\u0456\u0434\u043F\u0440\u0430\u0432\u0438\u0442\u0438',
       export: 'CSV',
       emailPlaceholder: '\u0442\u0432\u0456\u0439 email',
-      selectAll: '\u041e\u0431\u0440\u0430\u0442\u0438 \u0432\u0441\u0435'
+      selectAll: '\u041e\u0431\u0440\u0430\u0442\u0438 \u0432\u0441\u0435',
+      clearAll: '\u041e\u0447\u0438\u0441\u0442\u0438\u0442\u0438 \u0432\u0441\u0435',
+      negativeQuantityError: '\u041a\u0456\u043b\u044c\u043a\u0456\u0441\u0442\u044c \u043d\u0435 \u043c\u043e\u0436\u0435 \u0431\u0443\u0442\u0438 \u0432\u0456\u0434\u0454\u043c\u043d\u043e\u044e.'
     }
   };
 
@@ -95,8 +103,14 @@
 
   function recalc() {
     let grand = 0;
+    let hasError = false;
+    errorContainer.textContent = '';
     state.items.forEach(item => {
       const qty = parseFloat(item.qty.value) || 0;
+      if (qty < 0) {
+        hasError = true;
+        errorContainer.textContent = t('negativeQuantityError');
+      }
       const srvId = item.service.value;
       const srv = findService(srvId);
       if (srv) {
@@ -118,7 +132,7 @@
   }
 
   function addRow() {
-    const tr = createElem('tr');
+    const tr = createElem('tr', 'row-enter');
     const tdService = createElem('td');
     const select = createElem('select');
     state.categories.forEach(cat => {
@@ -165,6 +179,11 @@
     tr.appendChild(tdSelect);
     tr.appendChild(tdRemove);
     tbody.appendChild(tr);
+    setTimeout(() => {
+      tr.classList.remove('row-enter');
+      qtyInput.focus();
+    }, 500);
+
 
     // data labels for responsive layout
     tdService.setAttribute('data-label-service', t('service'));
@@ -184,9 +203,12 @@
     select.addEventListener('change', updatePrice);
     qtyInput.addEventListener('input', recalc);
     removeBtn.addEventListener('click', () => {
-      tbody.removeChild(tr);
-      state.items = state.items.filter(i => i !== item);
-      recalc();
+      tr.classList.add('row-exit');
+      setTimeout(() => {
+        tbody.removeChild(tr);
+        state.items = state.items.filter(i => i !== item);
+        recalc();
+      }, 500);
     });
     updatePrice();
   }
@@ -215,10 +237,27 @@
   function removeSelected() {
     const toRemove = state.items.filter(item => item.select && item.select.checked);
     toRemove.forEach(item => {
-      tbody.removeChild(item.row);
+      item.row.classList.add('row-exit');
     });
-    state.items = state.items.filter(item => !(item.select && item.select.checked));
-    recalc();
+    setTimeout(() => {
+      toRemove.forEach(item => {
+        tbody.removeChild(item.row);
+      });
+      state.items = state.items.filter(item => !(item.select && item.select.checked));
+      recalc();
+    }, 500);
+  }
+
+  function clearAll() {
+    state.items.forEach(item => {
+      item.row.classList.add('row-exit');
+    });
+    setTimeout(() => {
+      tbody.innerHTML = '';
+      state.items = [];
+      recalc();
+      addRow();
+    }, 500);
   }
 
   function sendEmail() {
@@ -249,6 +288,7 @@
     }).catch(() => alert('Error'));
   }
 
+  const errorContainer = createElem('div', 'error-container');
   const table = createElem('table', 'calc-table');
   const thead = createElem('thead');
   const headRow = createElem('tr');
@@ -279,6 +319,7 @@
 
   const addBtn = createElem('button', 'add-btn', t('addItem'));
   const removeSelectedBtn = createElem('button', 'remove-selected-btn', t('removeSelected'));
+  const clearAllBtn = createElem('button', 'clear-all-btn', t('clearAll'));
   const grandTotalEl = createElem('div', 'grand-total');
   const emailInput = createElem('input');
   emailInput.type = 'email';
@@ -287,9 +328,11 @@
   const exportBtn = createElem('button', 'export-btn', t('export'));
 
   container.appendChild(controls);
+  container.appendChild(errorContainer);
   container.appendChild(table);
   container.appendChild(addBtn);
   container.appendChild(removeSelectedBtn);
+  container.appendChild(clearAllBtn);
   container.appendChild(grandTotalEl);
   container.appendChild(emailInput);
   container.appendChild(sendBtn);
@@ -297,6 +340,7 @@
 
   addBtn.addEventListener('click', addRow);
   removeSelectedBtn.addEventListener('click', removeSelected);
+  clearAllBtn.addEventListener('click', clearAll);
   exportBtn.addEventListener('click', exportCSV);
   sendBtn.addEventListener('click', sendEmail);
 
@@ -317,6 +361,7 @@
     selectAllChk.title = t('selectAll');
     addBtn.textContent = t('addItem');
     removeSelectedBtn.textContent = t('removeSelected');
+    clearAllBtn.textContent = t('clearAll');
     grandTotalEl.textContent = `${t('grandTotal')}: 0 ${getCurrencySymbol(state.currency)}`;
     sendBtn.textContent = t('send');
     exportBtn.textContent = t('export');
