@@ -29,14 +29,22 @@ class CategoryForm(FlaskForm):
 class ServiceForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     price = FloatField('Price', validators=[DataRequired()])
-    category = SelectField('Category', coerce=int)
-    unit = SelectField('Unit', coerce=int)
+    category = SelectField('Category', coerce=int, render_kw={'class': 'minimal-select'})
+    unit = SelectField('Unit', coerce=int, render_kw={'class': 'minimal-select'})
     submit = SubmitField('Save')
 
 
 class DefaultSettingsForm(FlaskForm):
-    language = SelectField('Default language', coerce=str)
-    currency = SelectField('Default currency', coerce=str)
+    language = SelectField(
+        'Default language',
+        coerce=str,
+        render_kw={'class': 'minimal-select'},
+    )
+    currency = SelectField(
+        'Default currency',
+        coerce=str,
+        render_kw={'class': 'minimal-select'},
+    )
     submit = SubmitField('Save')
 
     def __init__(self, *args, **kwargs):

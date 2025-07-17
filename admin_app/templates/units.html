@@ -4,9 +4,11 @@
 <h2>Units</h2>
 <form method="post">
   {{ form.hidden_tag() }}
-  <p>{{ form.name.label }} {{ form.name() }}</p>
-  <p>{{ form.abbreviation.label }} {{ form.abbreviation() }}</p>
-  <p>{{ form.submit() }}</p>
+  <div class="form-controls">
+    <p>{{ form.name.label }} {{ form.name() }}</p>
+    <p>{{ form.abbreviation.label }} {{ form.abbreviation() }}</p>
+    <p>{{ form.submit(class_='btn') }}</p>
+  </div>
 </form>
 <form method="post" action="{{ url_for('admin.delete_selected_units') }}">
 <table>
