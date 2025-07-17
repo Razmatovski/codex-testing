@@ -20,10 +20,10 @@
   </tr>
   {% for category in categories %}
   <tr>
-    <td><input type="checkbox" name="category_ids" value="{{ category.id }}"></td>
-    <td>{{ category.id }}</td>
-    <td>{{ category.name }}</td>
-    <td>
+    <td data-label="Select"><input type="checkbox" name="category_ids" value="{{ category.id }}"></td>
+    <td data-label="ID">{{ category.id }}</td>
+    <td data-label="Name">{{ category.name }}</td>
+    <td data-label="Actions">
       <a href="{{ url_for('admin.edit_category', category_id=category.id) }}">edit</a>
       <a href="{{ url_for('admin.delete_category', category_id=category.id) }}">delete</a>
     </td>
