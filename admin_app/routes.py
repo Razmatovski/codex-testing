@@ -299,8 +299,14 @@ def import_services():
     if not reader.fieldnames or not required.issubset(reader.fieldnames):
         abort(400, 'Missing columns')
 
-    category_cache = {}
-    unit_cache = {}
+    category_cache = {
+        c.name.lower(): c
+        for c in Category.query.all()
+    }
+    unit_cache = {
+        u.abbreviation.lower(): u
+        for u in UnitOfMeasurement.query.all()
+    }
 
     for row in reader:
         name = row.get('name')
@@ -328,13 +334,9 @@ def import_services():
             cat_key = category_name.lower()
             category = category_cache.get(cat_key)
             if not category:
-                category = Category.query.filter(
-                    func.lower(Category.name) == cat_key
-                ).first()
-                if not category:
-                    category = Category(name=category_name)
-                    db.session.add(category)
-                    db.session.flush()
+                category = Category(name=category_name)
+                db.session.add(category)
+                db.session.flush()
                 category_cache[cat_key] = category
 
         unit = None
@@ -342,16 +344,12 @@ def import_services():
             unit_key = unit_abbrev.lower()
             unit = unit_cache.get(unit_key)
             if not unit:
-                unit = UnitOfMeasurement.query.filter(
-                    func.lower(UnitOfMeasurement.abbreviation) == unit_key
-                ).first()
-                if not unit:
-                    unit = UnitOfMeasurement(
-                        name=unit_abbrev,
-                        abbreviation=unit_abbrev,
-                    )
-                    db.session.add(unit)
-                    db.session.flush()
+                unit = UnitOfMeasurement(
+                    name=unit_abbrev,
+                    abbreviation=unit_abbrev,
+                )
+                db.session.add(unit)
+                db.session.flush()
                 unit_cache[unit_key] = unit
 
         svc = Service.query.filter(
