@@ -1,4 +1,5 @@
 from admin_app import db
+from decimal import Decimal
 from admin_app.models import (
     UnitOfMeasurement,
     Category,
@@ -154,7 +155,7 @@ def test_service_crud(client, app, login):
     with app.app_context():
         svc = db.session.get(Service, svc.id)
         assert svc.name == 'Svc2'
-        assert svc.price == 10
+        assert svc.price == Decimal('10.00')
     client.post(f'/services/delete/{svc.id}', follow_redirects=True)
     with app.app_context():
         assert db.session.get(Service, svc.id) is None

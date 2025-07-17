@@ -1,5 +1,6 @@
 import csv
 from io import StringIO, BytesIO
+from decimal import Decimal
 
 from admin_app.models import Service, Category, UnitOfMeasurement
 from sqlalchemy import func
@@ -44,7 +45,7 @@ def test_import_services_csv_success(client, app, login):
     with app.app_context():
         assert Service.query.filter_by(name='New').first() is not None
         svc = Service.query.filter_by(name='Test Service').first()
-        assert svc.price == 3.0
+        assert svc.price == Decimal('3.00')
 
 
 def test_import_services_csv_creates_related(client, app, login):
@@ -97,7 +98,7 @@ def test_import_services_csv_trims_and_case_insensitive(client, app, login):
         services = Service.query.filter_by(name='Test Service').all()
         assert len(services) == 1
         svc = services[0]
-        assert svc.price == 2.0
+        assert svc.price == Decimal('2.00')
         cat = Category.query.filter_by(name='Test Category').first()
         unit = UnitOfMeasurement.query.filter_by(abbreviation='pc').first()
         assert svc.category_id == cat.id
