@@ -21,11 +21,11 @@
   </tr>
   {% for unit in units %}
   <tr>
-    <td><input type="checkbox" name="unit_ids" value="{{ unit.id }}"></td>
-    <td>{{ unit.id }}</td>
-    <td>{{ unit.name }}</td>
-    <td>{{ unit.abbreviation }}</td>
-    <td>
+    <td data-label="Select"><input type="checkbox" name="unit_ids" value="{{ unit.id }}"></td>
+    <td data-label="ID">{{ unit.id }}</td>
+    <td data-label="Name">{{ unit.name }}</td>
+    <td data-label="Abbrev.">{{ unit.abbreviation }}</td>
+    <td data-label="Actions">
       <a href="{{ url_for('admin.edit_unit', unit_id=unit.id) }}">edit</a>
       <a href="{{ url_for('admin.delete_unit', unit_id=unit.id) }}">delete</a>
     </td>

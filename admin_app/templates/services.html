@@ -26,13 +26,13 @@
   </tr>
   {% for service in services %}
   <tr>
-    <td><input type="checkbox" name="service_ids" value="{{ service.id }}"></td>
-    <td>{{ service.id }}</td>
-    <td>{{ service.name }}</td>
-    <td>{{ service.price }}</td>
-    <td>{{ service.category.name if service.category else '' }}</td>
-    <td>{{ service.unit.abbreviation if service.unit else '' }}</td>
-    <td>
+    <td data-label="Select"><input type="checkbox" name="service_ids" value="{{ service.id }}"></td>
+    <td data-label="ID">{{ service.id }}</td>
+    <td data-label="Name">{{ service.name }}</td>
+    <td data-label="Price">{{ service.price }}</td>
+    <td data-label="Category">{{ service.category.name if service.category else '' }}</td>
+    <td data-label="Unit">{{ service.unit.abbreviation if service.unit else '' }}</td>
+    <td data-label="Actions">
       <a href="{{ url_for('admin.edit_service', service_id=service.id) }}">edit</a>
       <a href="{{ url_for('admin.delete_service', service_id=service.id) }}">delete</a>
     </td>
