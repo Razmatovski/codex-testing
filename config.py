@@ -4,6 +4,7 @@ import secrets
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_hex(16))
+    DEBUG = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         "SQLALCHEMY_DATABASE_URI", "sqlite:///app.db"
     )

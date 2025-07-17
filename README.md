@@ -51,6 +51,9 @@ The application reads some settings from the environment:
 - `SMTP_USERNAME` – username for SMTP authentication (optional).
 - `SMTP_PASSWORD` – password for SMTP authentication (optional).
 - `SMTP_USE_TLS` – set to `true` to enable TLS (optional).
+- `FLASK_DEBUG` – set to `true` to run the server in debug mode. This
+  increases log output and automatically restarts the application on code
+  changes.
 
 
 Example setup:
