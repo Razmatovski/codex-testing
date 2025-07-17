@@ -30,7 +30,13 @@
   background-color: #f2f2f2;
 }
 
-#calculator-widget .controls,
+#calculator-widget .controls {
+  margin-top: 20px;
+  padding: 10px 0;
+  display: flex;
+  gap: 10px;
+}
+
 #calculator-widget .grand-total {
   margin-top: 20px;
   padding: 10px 0;
@@ -96,6 +102,10 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+}
+
+#calculator-widget .controls select {
+  width: auto;
 }
 
 #calculator-widget input[type="email"] {
