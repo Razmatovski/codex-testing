@@ -6,7 +6,7 @@ from . import db
 
 class Language(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(8), unique=True, nullable=False)
+    code = db.Column(db.String(8), unique=True, nullable=False, index=True)
     name = db.Column(db.String(64), nullable=False)
 
     def __repr__(self):
@@ -15,7 +15,7 @@ class Language(db.Model):
 
 class Currency(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(8), unique=True, nullable=False)
+    code = db.Column(db.String(8), unique=True, nullable=False, index=True)
     name = db.Column(db.String(64), nullable=False)
     symbol = db.Column(db.String(8))
 
@@ -26,7 +26,9 @@ class Currency(db.Model):
 class UnitOfMeasurement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, nullable=False)
-    abbreviation = db.Column(db.String(16), unique=True, nullable=False)
+    abbreviation = db.Column(
+        db.String(16), unique=True, nullable=False, index=True
+    )
 
     def __repr__(self):
         return f"<UnitOfMeasurement {self.abbreviation}>"
@@ -34,7 +36,7 @@ class UnitOfMeasurement(db.Model):
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True, nullable=False)
+    name = db.Column(db.String(64), unique=True, nullable=False, index=True)
 
     def __repr__(self):
         return f"<Category {self.name}>"
@@ -67,7 +69,7 @@ class Setting(db.Model):
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), unique=True, nullable=False)
+    username = db.Column(db.String(64), unique=True, nullable=False, index=True)
     password_hash = db.Column(db.String(128), nullable=False)
 
     def set_password(self, password: str) -> None:
