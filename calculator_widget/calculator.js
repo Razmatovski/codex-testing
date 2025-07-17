@@ -327,6 +327,11 @@
   const sendBtn = createElem('button', 'send-btn', t('send'));
   const exportBtn = createElem('button', 'export-btn', t('export'));
 
+  const exportControls = createElem('div', 'export-controls');
+  exportControls.appendChild(emailInput);
+  exportControls.appendChild(sendBtn);
+  exportControls.appendChild(exportBtn);
+
   container.appendChild(controls);
   container.appendChild(errorContainer);
   container.appendChild(table);
@@ -334,9 +339,7 @@
   container.appendChild(removeSelectedBtn);
   container.appendChild(clearAllBtn);
   container.appendChild(grandTotalEl);
-  container.appendChild(emailInput);
-  container.appendChild(sendBtn);
-  container.appendChild(exportBtn);
+  container.appendChild(exportControls);
 
   addBtn.addEventListener('click', addRow);
   removeSelectedBtn.addEventListener('click', removeSelected);
