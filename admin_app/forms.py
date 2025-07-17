@@ -3,7 +3,7 @@ from wtforms import (
     StringField,
     PasswordField,
     SubmitField,
-    FloatField,
+    DecimalField,
     SelectField,
 )
 from wtforms.validators import DataRequired
@@ -28,7 +28,7 @@ class CategoryForm(FlaskForm):
 
 class ServiceForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
-    price = FloatField('Price', validators=[DataRequired()])
+    price = DecimalField('Price', validators=[DataRequired()], places=2)
     category = SelectField('Category', coerce=int, render_kw={'class': 'minimal-select'})
     unit = SelectField('Unit', coerce=int, render_kw={'class': 'minimal-select'})
     submit = SubmitField('Save')

@@ -16,6 +16,7 @@ from . import db
 from sqlalchemy import func
 import csv
 import io
+import decimal
 from .forms import (
     LoginForm,
     UnitForm,
@@ -282,7 +283,7 @@ def export_services():
     for svc in Service.query.all():
         writer.writerow([
             svc.name,
-            f"{svc.price}",
+            f"{svc.price:.2f}",
             svc.category.name if svc.category else '',
             svc.unit.abbreviation if svc.unit else '',
         ])
@@ -336,8 +337,8 @@ def import_services():
             abort(400, 'Missing data')
 
         try:
-            price = float(price)
-        except ValueError:
+            price = decimal.Decimal(price).quantize(decimal.Decimal('0.01'))
+        except decimal.InvalidOperation:
             abort(400, 'Invalid price')
 
         category = None

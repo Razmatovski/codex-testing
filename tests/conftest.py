@@ -1,5 +1,6 @@
 import pytest
 from admin_app import create_app, db
+from decimal import Decimal
 from admin_app.models import (
     Language,
     Currency,
@@ -28,8 +29,12 @@ def app():
         category = Category(name='Test Category')
         db.session.add_all([lang, lang_uk, currency, unit, category])
         db.session.commit()
-        service = Service(name='Test Service', price=1.0,
-                          category_id=category.id, unit_id=unit.id)
+        service = Service(
+            name='Test Service',
+            price=Decimal('1.00'),
+            category_id=category.id,
+            unit_id=unit.id,
+        )
         setting1 = Setting(key='default_currency_id', value=currency.code)
         setting2 = Setting(key='default_language_id', value=lang.code)
         user = User(username='admin')
