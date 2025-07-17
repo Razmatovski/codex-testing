@@ -89,12 +89,17 @@
 }
 
 #calculator-widget input[type="number"],
+#calculator-widget input[type="email"],
 #calculator-widget select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+}
+
+#calculator-widget input[type="email"] {
+    padding: 10px 15px;
 }
 
 @media (max-width: 500px) {

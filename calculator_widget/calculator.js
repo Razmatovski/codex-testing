@@ -152,7 +152,7 @@
     const qtyInput = createElem('input');
     qtyInput.type = 'number';
     qtyInput.min = '0';
-    qtyInput.value = '0';
+    qtyInput.placeholder = t('quantity');
     tdQty.appendChild(qtyInput);
 
     const tdPrice = createElem('td');
