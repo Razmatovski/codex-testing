@@ -48,6 +48,15 @@ tr:nth-child(even) {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+input[type="text"],
+input[type="password"] {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 @media (max-width: 500px) {
