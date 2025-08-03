@@ -69,12 +69,14 @@ document.getElementById('select-all-services').addEventListener('change', functi
   <a href="{{ url_for('admin.export_services') }}">Export CSV</a>
 </p>
 <form action="{{ url_for('admin.import_services') }}" method="post" enctype="multipart/form-data">
-  <div class="form-row">
-    <label for="file">File</label>
-    <input type="file" name="file" id="file">
-  </div>
-  <div class="form-row">
-    <input type="submit" value="Import CSV">
+  <div class="form-controls">
+    <div class="form-row">
+      <label for="file">File</label>
+      <input type="file" name="file" id="file">
+    </div>
+    <div class="form-row">
+      <input type="submit" value="Import CSV">
+    </div>
   </div>
 </form>
 {% endblock %}

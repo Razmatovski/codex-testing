@@ -60,6 +60,7 @@ tr:nth-child(even) {
   align-self: center;
 }
 
+/* Ensure form inputs and selects span full width */
 .form-controls input,
 .form-controls select {
   width: 100%;
