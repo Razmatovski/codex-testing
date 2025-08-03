@@ -48,6 +48,7 @@ tr:nth-child(even) {
   display: grid;
   grid-template-columns: 150px 1fr;
   gap: 8px;
+  max-width: 500px;
 }
 
 .form-row {
@@ -60,10 +61,11 @@ tr:nth-child(even) {
   align-self: center;
 }
 
-/* Ensure form inputs and selects span full width */
+/* Prevent inputs from stretching across the entire page */
 .form-controls input,
 .form-controls select {
-  width: 100%;
+  width: auto;
+  justify-self: start;
 }
 
 .form-controls button {
