@@ -7,6 +7,7 @@ def test_calculator_data_endpoint(client):
         'settings',
         'languages',
         'currencies',
+        'currency_by_lang',
         'units_of_measurement',
         'categories',
     }
@@ -17,5 +18,7 @@ def test_calculator_data_endpoint(client):
     assert any(lang['id'] == 'uk' for lang in data['languages'])
     assert isinstance(data['currencies'], list)
     assert all('symbol' in cur for cur in data['currencies'])
+    assert isinstance(data['currency_by_lang'], dict)
+    assert data['currency_by_lang'].get('uk') == 'PLN'
     assert isinstance(data['units_of_measurement'], list)
     assert isinstance(data['categories'], list)

@@ -31,6 +31,7 @@ describe('calculator widget language detection', () => {
         { id: 'USD', code: 'USD', symbol: '$', name: 'US Dollar' },
         { id: 'PLN', code: 'PLN', symbol: 'z\u0142', name: 'Polish Zloty' }
       ],
+      currency_by_lang: { uk: 'PLN', en: 'USD' },
       units_of_measurement: [],
       categories: [
         {

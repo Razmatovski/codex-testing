@@ -15,3 +15,10 @@ class Config:
     SMTP_USERNAME = os.environ.get("SMTP_USERNAME")
     SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD")
     SMTP_USE_TLS = os.environ.get("SMTP_USE_TLS", "false").lower() == "true"
+
+    CURRENCY_BY_LANG = {
+        "pl": "PLN",
+        "en": "USD",
+        "ru": "USD",
+        "uk": "PLN",
+    }

@@ -66,6 +66,7 @@ def calculator_data():
             "settings": settings,
             "languages": languages,
             "currencies": currencies,
+            "currency_by_lang": current_app.config.get("CURRENCY_BY_LANG", {}),
             "units_of_measurement": units,
             "categories": categories,
         }
