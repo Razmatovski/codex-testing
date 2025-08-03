@@ -52,4 +52,7 @@ document.getElementById('select-all-units').addEventListener('change', function(
   });
 });
 </script>
+<p>
+  <a href="{{ url_for('admin.export_units') }}">Export CSV</a>
+</p>
 {% endblock %}

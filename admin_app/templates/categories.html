@@ -47,4 +47,7 @@ document.getElementById('select-all-categories').addEventListener('change', func
   });
 });
 </script>
+<p>
+  <a href="{{ url_for('admin.export_categories') }}">Export CSV</a>
+</p>
 {% endblock %}
