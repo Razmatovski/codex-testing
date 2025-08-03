@@ -70,7 +70,7 @@
     }
   };
 
-  const currencyByLang = { pl: 'PLN', en: 'USD', ru: 'USD', uk: 'PLN' };
+  const currencyByLang = {};
   if (typeof window !== 'undefined') {
     window.currencyByLang = currencyByLang;
   }
@@ -421,6 +421,7 @@
         state.languages = data.languages;
         state.currencies = data.currencies;
         state.categories = data.categories;
+        Object.assign(currencyByLang, data.currency_by_lang || {});
 
         const fallbackLang = data.settings.default_language_id || 'en';
         const fallbackCur = data.settings.default_currency_id || 'USD';
