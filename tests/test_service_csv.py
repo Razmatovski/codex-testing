@@ -79,7 +79,34 @@ def test_import_services_csv_validation_error(client, login):
         data=data,
         content_type='multipart/form-data',
     )
-    assert resp.status_code == 400
+    assert resp.status_code == 302
+    with client.session_transaction() as sess:
+        messages = [m for _c, m in sess.get('_flashes', [])]
+    assert any('Missing columns' in m for m in messages)
+
+
+def test_import_services_csv_partial_import(client, app, login):
+    login()
+    csv_data = (
+        'name,price,category,unit\n'
+        'Good,1,Test Category,pc\n'
+        'Bad,,Test Category,pc\n'
+    )
+    data = {'file': (BytesIO(csv_data.encode('utf-8')), 'services.csv')}
+    resp = client.post(
+        '/services/import',
+        data=data,
+        content_type='multipart/form-data',
+    )
+    assert resp.status_code == 302
+    with app.app_context():
+        good = Service.query.filter_by(name='Good').first()
+        bad = Service.query.filter_by(name='Bad').first()
+        assert good is not None
+        assert bad is None
+    with client.session_transaction() as sess:
+        messages = [m for _c, m in sess.get('_flashes', [])]
+    assert any('Row' in m and 'Missing data' in m for m in messages)
 
 
 def test_import_services_csv_trims_and_case_insensitive(client, app, login):
