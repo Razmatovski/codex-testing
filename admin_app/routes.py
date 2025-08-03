@@ -141,6 +141,21 @@ def delete_selected_units():
     return redirect(url_for('admin.units'))
 
 
+@admin_bp.route('/units/export')
+@login_required
+def export_units():
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['name', 'abbreviation'])
+    for unit in UnitOfMeasurement.query.all():
+        writer.writerow([unit.name, unit.abbreviation])
+    response = Response(output.getvalue(), mimetype='text/csv')
+    response.headers['Content-Disposition'] = (
+        'attachment; filename=units.csv'
+    )
+    return response
+
+
 @admin_bp.route('/categories', methods=['GET', 'POST'])
 @login_required
 def categories():
@@ -193,6 +208,21 @@ def delete_selected_categories():
     if ids:
         db.session.commit()
     return redirect(url_for('admin.categories'))
+
+
+@admin_bp.route('/categories/export')
+@login_required
+def export_categories():
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['name'])
+    for category in Category.query.all():
+        writer.writerow([category.name])
+    response = Response(output.getvalue(), mimetype='text/csv')
+    response.headers['Content-Disposition'] = (
+        'attachment; filename=categories.csv'
+    )
+    return response
 
 
 @admin_bp.route('/services', methods=['GET', 'POST'])
