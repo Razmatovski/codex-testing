@@ -1,30 +1,32 @@
 <!doctype html>
 <html>
-<body>
-<title>{% block title %}Admin{% endblock %}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<nav>
-  <a href="{{ url_for('admin.units') }}">Units</a> |
-  <a href="{{ url_for('admin.categories') }}">Categories</a> |
-  <a href="{{ url_for('admin.services') }}">Services</a> |
-  <a href="{{ url_for('admin.settings') }}">Settings</a> |
-  <a href="{{ url_for('admin.calculator_widget_page') }}">Calculator</a> |
-  {% if current_user.is_authenticated %}
-  <a href="{{ url_for('admin.logout') }}">Logout</a>
-  {% else %}
-  <a href="{{ url_for('admin.login') }}">Login</a>
-  {% endif %}
-</nav>
-<hr>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class="flashes">
-    {% for msg in messages %}
-      <li>{{ msg }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-{% block content %}{% endblock %}
-</body>
+  <head>
+    <title>{% block title %}Admin{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body>
+    <nav>
+      <a href="{{ url_for('admin.units') }}">Units</a>
+      <a href="{{ url_for('admin.categories') }}">Categories</a>
+      <a href="{{ url_for('admin.services') }}">Services</a>
+      <a href="{{ url_for('admin.settings') }}">Settings</a>
+      <a href="{{ url_for('admin.calculator_widget_page') }}">Calculator</a>
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('admin.logout') }}">Logout</a>
+      {% else %}
+      <a href="{{ url_for('admin.login') }}">Login</a>
+      {% endif %}
+    </nav>
+    <hr>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for msg in messages %}
+          <li>{{ msg }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </body>
 </html>
