@@ -13,9 +13,9 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from . import db
 from sqlalchemy import func
-import csv
 import io
 import decimal
+from .utils.io import export_csv, import_csv
 from .forms import (
     LoginForm,
     UnitForm,
@@ -306,18 +306,23 @@ def delete_selected_services():
 @admin_bp.route('/services/export')
 @login_required
 def export_services():
-    output = io.StringIO()
-    writer = csv.writer(output)
-    writer.writerow(['id', 'name', 'price', 'category', 'unit'])
-    for svc in Service.query.all():
-        writer.writerow([
-            svc.id,
-            svc.name,
-            f"{svc.price:.2f}",
-            svc.category.name if svc.category else '',
-            svc.unit.abbreviation if svc.unit else '',
-        ])
-    response = Response(output.getvalue(), mimetype='text/csv')
+    data = export_csv(
+        Service.query.all(),
+        [
+            ('id', lambda s: s.id),
+            ('name', lambda s: s.name),
+            ('price', lambda s: f"{s.price:.2f}"),
+            (
+                'category',
+                lambda s: s.category.name if s.category else '',
+            ),
+            (
+                'unit',
+                lambda s: s.unit.abbreviation if s.unit else '',
+            ),
+        ],
+    )
+    response = Response(data, mimetype='text/csv')
     response.headers['Content-Disposition'] = (
         'attachment; filename=services.csv'
     )
@@ -334,18 +339,18 @@ def import_services():
     else:
         try:
             stream = io.StringIO(file.stream.read().decode('utf-8'))
-            reader = csv.DictReader(stream)
         except Exception:
-            reader = None
+            stream = None
             errors.append('Invalid CSV')
-
-        required = {'name', 'price', 'category', 'unit'}
-        if reader and (not reader.fieldnames or not required.issubset(reader.fieldnames)):
-            errors.append('Missing columns')
 
     if errors:
         flash('\n'.join(errors))
         return redirect(url_for('admin.services'))
+
+    def validate_columns(fieldnames):
+        required = {'name', 'price', 'category', 'unit'}
+        if not fieldnames or not required.issubset(fieldnames):
+            return 'Missing columns'
 
     category_cache = {
         c.name.lower(): c
@@ -356,7 +361,7 @@ def import_services():
         for u in UnitOfMeasurement.query.all()
     }
 
-    for row in reader:
+    def upsert(row, line_num):
         svc_id = row.get('id')
         name = row.get('name')
         price = row.get('price')
@@ -373,14 +378,14 @@ def import_services():
             unit_abbrev = unit_abbrev.strip()
 
         if not name or not price:
-            errors.append(f"Row {reader.line_num}: Missing data")
-            continue
+            return f"Row {line_num}: Missing data"
 
         try:
-            price = decimal.Decimal(price).quantize(decimal.Decimal('0.01'))
+            price_val = decimal.Decimal(price).quantize(
+                decimal.Decimal('0.01')
+            )
         except decimal.InvalidOperation:
-            errors.append(f"Row {reader.line_num}: Invalid price")
-            continue
+            return f"Row {line_num}: Invalid price"
 
         category = None
         if category_name:
@@ -412,8 +417,7 @@ def import_services():
                 svc = Service.query.get(int(svc_id))
                 svc_by_id = svc is not None
             except ValueError:
-                errors.append(f"Row {reader.line_num}: Invalid id")
-                continue
+                return f"Row {line_num}: Invalid id"
         if not svc:
             svc = Service.query.filter(
                 func.lower(Service.name) == name.lower()
@@ -421,17 +425,19 @@ def import_services():
         if svc:
             if svc_by_id:
                 svc.name = name
-            svc.price = price
+            svc.price = price_val
             svc.category = category
             svc.unit = unit
         else:
             svc = Service(
                 name=name,
-                price=price,
+                price=price_val,
                 category=category,
                 unit=unit,
             )
             db.session.add(svc)
+
+    errors = import_csv(stream, [validate_columns], upsert)
 
     db.session.commit()
     if errors:
