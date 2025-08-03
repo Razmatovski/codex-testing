@@ -35,6 +35,8 @@
   padding: 10px 0;
   display: flex;
   gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 #calculator-widget .grand-total {
@@ -60,8 +62,13 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-right: 10px;
   transition: background-color 0.3s;
+}
+
+#calculator-widget .add-btn,
+#calculator-widget .remove-selected-btn,
+#calculator-widget .clear-all-btn {
+  margin-right: 10px;
 }
 
 #calculator-widget button:hover {
@@ -115,7 +122,10 @@
   box-sizing: border-box;
 }
 
-#calculator-widget .controls select {
+#calculator-widget .controls select,
+#calculator-widget .controls button {
+  flex: 1 1 150px;
+  max-width: 200px;
   width: auto;
 }
 
