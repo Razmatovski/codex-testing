@@ -5,9 +5,17 @@
 <form method="post">
   {{ form.hidden_tag() }}
   <div class="form-controls">
-    <p>{{ form.name.label }} {{ form.name() }}</p>
-    <p>{{ form.abbreviation.label }} {{ form.abbreviation() }}</p>
-    <p>{{ form.submit(class_='btn') }}</p>
+    <div class="form-row">
+      <label for="{{ form.name.id }}">{{ form.name.label.text }}</label>
+      {{ form.name() }}
+    </div>
+    <div class="form-row">
+      <label for="{{ form.abbreviation.id }}">{{ form.abbreviation.label.text }}</label>
+      {{ form.abbreviation() }}
+    </div>
+    <div class="form-row">
+      {{ form.submit(class_='btn') }}
+    </div>
   </div>
 </form>
 <form method="post" action="{{ url_for('admin.delete_selected_units') }}">
@@ -35,7 +43,7 @@
   </tr>
   {% endfor %}
 </table>
-  <p><input type="submit" value="Delete selected"></p>
+  <div class="form-row"><input type="submit" value="Delete selected"></div>
 </form>
 <script>
 document.getElementById('select-all-units').addEventListener('change', function() {

@@ -5,11 +5,25 @@
 <form method="post">
   {{ form.hidden_tag() }}
   <div class="form-controls">
-    <p>{{ form.name.label }} {{ form.name() }}</p>
-    <p>{{ form.price.label }} {{ form.price() }}</p>
-    <p>{{ form.category.label }} {{ form.category() }}</p>
-    <p>{{ form.unit.label }} {{ form.unit() }}</p>
-    <p>{{ form.submit(class_='btn') }}</p>
+    <div class="form-row">
+      <label for="{{ form.name.id }}">{{ form.name.label.text }}</label>
+      {{ form.name() }}
+    </div>
+    <div class="form-row">
+      <label for="{{ form.price.id }}">{{ form.price.label.text }}</label>
+      {{ form.price() }}
+    </div>
+    <div class="form-row">
+      <label for="{{ form.category.id }}">{{ form.category.label.text }}</label>
+      {{ form.category() }}
+    </div>
+    <div class="form-row">
+      <label for="{{ form.unit.id }}">{{ form.unit.label.text }}</label>
+      {{ form.unit() }}
+    </div>
+    <div class="form-row">
+      {{ form.submit(class_='btn') }}
+    </div>
   </div>
 </form>
 
@@ -42,7 +56,7 @@
   </tr>
   {% endfor %}
 </table>
-  <p><input type="submit" value="Delete selected"></p>
+  <div class="form-row"><input type="submit" value="Delete selected"></div>
 </form>
 <script>
 document.getElementById('select-all-services').addEventListener('change', function() {
@@ -55,7 +69,12 @@ document.getElementById('select-all-services').addEventListener('change', functi
   <a href="{{ url_for('admin.export_services') }}">Export CSV</a>
 </p>
 <form action="{{ url_for('admin.import_services') }}" method="post" enctype="multipart/form-data">
-  <p><input type="file" name="file"></p>
-  <p><input type="submit" value="Import CSV"></p>
+  <div class="form-row">
+    <label for="file">File</label>
+    <input type="file" name="file" id="file">
+  </div>
+  <div class="form-row">
+    <input type="submit" value="Import CSV">
+  </div>
 </form>
 {% endblock %}

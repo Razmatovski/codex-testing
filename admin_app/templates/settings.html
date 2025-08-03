@@ -6,9 +6,17 @@
 <form method="post">
   {{ form.hidden_tag() }}
   <div class="form-controls">
-    <p>{{ form.language.label }} {{ form.language() }}</p>
-    <p>{{ form.currency.label }} {{ form.currency() }}</p>
-    <p>{{ form.submit(class_='btn') }}</p>
+    <div class="form-row">
+      <label for="{{ form.language.id }}">{{ form.language.label.text }}</label>
+      {{ form.language() }}
+    </div>
+    <div class="form-row">
+      <label for="{{ form.currency.id }}">{{ form.currency.label.text }}</label>
+      {{ form.currency() }}
+    </div>
+    <div class="form-row">
+      {{ form.submit(class_='btn') }}
+    </div>
   </div>
 </form>
 {% endblock %}
