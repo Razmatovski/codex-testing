@@ -14,9 +14,13 @@ def test_export_services_csv(client, app, login):
     reader = csv.DictReader(StringIO(data))
     rows = list(reader)
     assert rows
+    assert reader.fieldnames == ['id', 'name', 'price', 'category', 'unit']
     with app.app_context():
-        names = {s.name for s in Service.query.all()}
+        services = Service.query.all()
+        names = {s.name for s in services}
+        ids = {str(s.id) for s in services}
     assert names == {row['name'] for row in rows}
+    assert ids == {row['id'] for row in rows}
 
 
 def test_import_services_csv_success(client, app, login):
@@ -180,3 +184,29 @@ def test_import_services_handles_duplicate_categories(client, app, login):
         ).all()
         assert len(services) == 2
         assert all(s.category_id == cat.id for s in services)
+
+
+def test_import_services_csv_updates_by_id(client, app, login):
+    login()
+    with app.app_context():
+        svc = Service.query.filter_by(name='Test Service').first()
+        svc_id = svc.id
+        orig_price = svc.price
+        cat_name = svc.category.name if svc.category else ''
+        unit_abbrev = svc.unit.abbreviation if svc.unit else ''
+    new_price = orig_price + 1
+    csv_data = (
+        'id,name,price,category,unit\n'
+        f'{svc_id},Renamed,{new_price},{cat_name},{unit_abbrev}\n'
+    )
+    data = {'file': (BytesIO(csv_data.encode('utf-8')), 'services.csv')}
+    resp = client.post(
+        '/services/import',
+        data=data,
+        content_type='multipart/form-data',
+    )
+    assert resp.status_code == 302
+    with app.app_context():
+        svc = Service.query.get(svc_id)
+        assert svc.name == 'Renamed'
+        assert svc.price == new_price

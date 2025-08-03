@@ -68,6 +68,7 @@ document.getElementById('select-all-services').addEventListener('change', functi
 <p>
   <a href="{{ url_for('admin.export_services') }}">Export CSV</a>
 </p>
+<p>CSV format: id, name, price, category, unit (id optional).</p>
 <form action="{{ url_for('admin.import_services') }}" method="post" enctype="multipart/form-data">
   <div class="form-controls">
     <div class="form-row">

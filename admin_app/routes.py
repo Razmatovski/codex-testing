@@ -308,9 +308,10 @@ def delete_selected_services():
 def export_services():
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(['name', 'price', 'category', 'unit'])
+    writer.writerow(['id', 'name', 'price', 'category', 'unit'])
     for svc in Service.query.all():
         writer.writerow([
+            svc.id,
             svc.name,
             f"{svc.price:.2f}",
             svc.category.name if svc.category else '',
@@ -356,11 +357,14 @@ def import_services():
     }
 
     for row in reader:
+        svc_id = row.get('id')
         name = row.get('name')
         price = row.get('price')
         category_name = row.get('category')
         unit_abbrev = row.get('unit')
 
+        if isinstance(svc_id, str):
+            svc_id = svc_id.strip()
         if isinstance(name, str):
             name = name.strip()
         if isinstance(category_name, str):
@@ -401,10 +405,22 @@ def import_services():
                 db.session.flush()
                 unit_cache[unit_key] = unit
 
-        svc = Service.query.filter(
-            func.lower(Service.name) == name.lower()
-        ).first()
+        svc = None
+        svc_by_id = False
+        if svc_id:
+            try:
+                svc = Service.query.get(int(svc_id))
+                svc_by_id = svc is not None
+            except ValueError:
+                errors.append(f"Row {reader.line_num}: Invalid id")
+                continue
+        if not svc:
+            svc = Service.query.filter(
+                func.lower(Service.name) == name.lower()
+            ).first()
         if svc:
+            if svc_by_id:
+                svc.name = name
             svc.price = price
             svc.category = category
             svc.unit = unit
