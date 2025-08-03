@@ -5,9 +5,17 @@
 <form method="post">
   {{ form.hidden_tag() }}
   <div class="form-controls">
-    <p>{{ form.username.label }} {{ form.username() }}</p>
-    <p>{{ form.password.label }} {{ form.password() }}</p>
-    <p>{{ form.submit(class_='btn') }}</p>
+    <div class="form-row">
+      <label for="{{ form.username.id }}">{{ form.username.label.text }}</label>
+      {{ form.username() }}
+    </div>
+    <div class="form-row">
+      <label for="{{ form.password.id }}">{{ form.password.label.text }}</label>
+      {{ form.password() }}
+    </div>
+    <div class="form-row">
+      {{ form.submit(class_='btn') }}
+    </div>
   </div>
 </form>
 {% endblock %}

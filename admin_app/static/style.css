@@ -45,18 +45,28 @@ tr:nth-child(even) {
 }
 
 .form-controls {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  flex-direction: column;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 8px;
 }
 
-.form-controls p {
-  margin: 0;
-  display: flex;
-  gap: 6px;
-  align-items: center;
+.form-row {
+  display: contents;
+}
+
+.form-controls label {
+  width: 150px;
+  text-align: right;
+  align-self: center;
+}
+
+.form-controls input,
+.form-controls select {
+  width: 100%;
+}
+
+.form-controls button {
+  grid-column: 2;
 }
 
 input[type="text"],
