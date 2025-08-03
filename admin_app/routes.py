@@ -8,7 +8,6 @@ from flask import (
     send_from_directory,
     current_app,
     Response,
-    abort,
 )
 from flask_login import login_user, logout_user, login_required, current_user
 
@@ -327,19 +326,25 @@ def export_services():
 @admin_bp.route('/services/import', methods=['POST'])
 @login_required
 def import_services():
+    errors = []
     file = request.files.get('file')
     if not file or file.filename == '':
-        abort(400, 'No file provided')
+        errors.append('No file provided')
+    else:
+        try:
+            stream = io.StringIO(file.stream.read().decode('utf-8'))
+            reader = csv.DictReader(stream)
+        except Exception:
+            reader = None
+            errors.append('Invalid CSV')
 
-    try:
-        stream = io.StringIO(file.stream.read().decode('utf-8'))
-        reader = csv.DictReader(stream)
-    except Exception:
-        abort(400, 'Invalid CSV')
+        required = {'name', 'price', 'category', 'unit'}
+        if reader and (not reader.fieldnames or not required.issubset(reader.fieldnames)):
+            errors.append('Missing columns')
 
-    required = {'name', 'price', 'category', 'unit'}
-    if not reader.fieldnames or not required.issubset(reader.fieldnames):
-        abort(400, 'Missing columns')
+    if errors:
+        flash('\n'.join(errors))
+        return redirect(url_for('admin.services'))
 
     category_cache = {
         c.name.lower(): c
@@ -364,12 +369,14 @@ def import_services():
             unit_abbrev = unit_abbrev.strip()
 
         if not name or not price:
-            abort(400, 'Missing data')
+            errors.append(f"Row {reader.line_num}: Missing data")
+            continue
 
         try:
             price = decimal.Decimal(price).quantize(decimal.Decimal('0.01'))
         except decimal.InvalidOperation:
-            abort(400, 'Invalid price')
+            errors.append(f"Row {reader.line_num}: Invalid price")
+            continue
 
         category = None
         if category_name:
@@ -411,7 +418,10 @@ def import_services():
             db.session.add(svc)
 
     db.session.commit()
-    flash('Services imported')
+    if errors:
+        flash('Import completed with errors:\n' + '\n'.join(errors))
+    else:
+        flash('Services imported')
     return redirect(url_for('admin.services'))
 
 
